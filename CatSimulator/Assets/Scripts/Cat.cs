@@ -9,6 +9,7 @@ public class Cat : MonoBehaviour {
     public float status = 100.0f;
     public float friendly = 0;
     Animator anim;
+    float StartTime, EndTime;
 
     int RandomValue()
     {
@@ -23,10 +24,18 @@ public class Cat : MonoBehaviour {
 	void Start () {
         rand = RandomValue();
         anim = GetComponent<Animator>();
+        StartTime = Time.time;
     }
 
     // Update is called once per frame
     void Update () {
+        EndTime = Time.time;
+
+        if(EndTime - StartTime > 5.0f)
+        {
+            friendly++;
+            StartTime = Time.time;
+        }
 
         if (rand == (int)CatState.idle)
         {
