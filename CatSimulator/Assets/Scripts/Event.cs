@@ -6,7 +6,6 @@ using UnityEngine.UI;
 public class Event : MonoBehaviour {
 
     GameObject[] button;
-    public float RandValue = 0;
     int patternnum = 1;
     public Slider friendlyslider;
     public Slider statusslider;
@@ -15,10 +14,13 @@ public class Event : MonoBehaviour {
     GameObject food;
     Cat catScript;
     Animator anim;
+    int rand;
 
-    void RandomValue()
+    int RandomValue()
     {
-        RandValue = Random.Range(0, 101);
+        int RandValue = Random.Range(0, 101);
+
+        return RandValue;
     }
 
     // Use this for initialization
@@ -47,6 +49,86 @@ public class Event : MonoBehaviour {
     
     public void PressButton(int Code)
     {
-        Debug.Log(button[Code].name);
+        
+        if(Code == 0)
+        {
+            
+        }
+        else if(Code == 1)
+        {
+
+        }
+        else if(Code == 2)
+        {
+
+        }
+        else if(Code == 3)
+        {
+
+        }
+        else if(Code == 4)
+        {
+
+
+        }
+        else if(Code == 5)
+        {
+
+        }
+    }
+
+    int catFriendly()
+    {
+        rand = RandomValue();
+
+        if(catScript.friendly <= 30)
+        {
+            if(rand <= 30)
+            {
+                return 1;
+            }
+            else
+            {
+                return 0;
+            }
+        }
+        if(catScript.friendly <= 60)
+        {
+            if(rand <= 30)
+            {
+                return 1;
+            }
+            else if(rand <= 60)
+            {
+                return 2;
+            }
+            else
+            {
+                return 0;
+            }
+        }
+        if(catScript.friendly <= 90)
+        {
+            if(rand <= 30)
+            {
+                return 1;
+            }
+            else if(rand <= 60)
+            {
+                return 2;
+            }
+            else if(rand <= 90)
+            {
+                return 3;
+            }
+            else
+            {
+                return 0;
+            }
+        }
+        else
+        {
+            return 0;
+        }
     }
 }
