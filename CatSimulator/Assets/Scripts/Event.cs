@@ -52,7 +52,7 @@ public class Event : MonoBehaviour {
     {
         int result = catFriendly();
 
-        if(Code == 0)
+        if(button[Code].name == "긍정1")
         {
             if(result == 0)
             {
@@ -71,7 +71,7 @@ public class Event : MonoBehaviour {
 
             }
         }
-        else if(Code == 1)
+        else if(button[Code].name == "긍정2")
         {
             if (result == 0)
             {
@@ -90,7 +90,7 @@ public class Event : MonoBehaviour {
 
             }
         }
-        else if(Code == 2)
+        else if(button[Code].name == "긍정3")
         {
             if (result == 0)
             {
@@ -109,7 +109,7 @@ public class Event : MonoBehaviour {
 
             }
         }
-        else if(Code == 3)
+        else if(button[Code].name == "긍정4")
         {
             if (result == 0)
             {
@@ -128,7 +128,7 @@ public class Event : MonoBehaviour {
 
             }
         }
-        else if(Code == 4)
+        else if(button[Code].name == "부정1")
         {
             if (result == 0)
             {
@@ -147,7 +147,7 @@ public class Event : MonoBehaviour {
 
             }
         }
-        else if(Code == 5)
+        else if(button[Code].name == "부정2")
         {
             if (result == 0)
             {
