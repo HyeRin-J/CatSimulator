@@ -136,6 +136,9 @@ public class Event : MonoBehaviour {
                     break;
             }
         }
+        if(button[Code].name == "동작X"){
+            Debug.Log("랜덤행동");
+        }
         else
         {
             Debug.Log("??");
