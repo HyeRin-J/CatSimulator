@@ -54,116 +54,86 @@ public class Event : MonoBehaviour {
 
         if(button[Code].name == "긍정1")
         {
-            if(result == 0)
+            switch (result)
             {
-
-            }
-            if (result == 1)
-            {
-
-            }
-            if (result == 2)
-            {
-
-            }
-            if (result == 3)
-            {
-
+                case 0:
+                    break;
+                case 1:
+                    break;
+                case 2:
+                    break;
+                case 3:
+                    break;
             }
         }
         else if(button[Code].name == "긍정2")
         {
-            if (result == 0)
+            switch (result)
             {
-
-            }
-            if (result == 1)
-            {
-
-            }
-            if (result == 2)
-            {
-
-            }
-            if (result == 3)
-            {
-
+                case 0:
+                    break;
+                case 1:
+                    break;
+                case 2:
+                    break;
+                case 3:
+                    break;
             }
         }
         else if(button[Code].name == "긍정3")
         {
-            if (result == 0)
+            switch (result)
             {
-
-            }
-            if (result == 1)
-            {
-
-            }
-            if (result == 2)
-            {
-
-            }
-            if (result == 3)
-            {
-
+                case 0:
+                    break;
+                case 1:
+                    break;
+                case 2:
+                    break;
+                case 3:
+                    break;
             }
         }
         else if(button[Code].name == "긍정4")
         {
-            if (result == 0)
+            switch (result)
             {
-
-            }
-            if (result == 1)
-            {
-
-            }
-            if (result == 2)
-            {
-
-            }
-            if (result == 3)
-            {
-
+                case 0:
+                    break;
+                case 1:
+                    break;
+                case 2:
+                    break;
+                case 3:
+                    break;
             }
         }
         else if(button[Code].name == "부정1")
         {
-            if (result == 0)
+            switch (result)
             {
-
-            }
-            if (result == 1)
-            {
-
-            }
-            if (result == 2)
-            {
-
-            }
-            if (result == 3)
-            {
-
+                case 0:
+                    break;
+                case 1:
+                    break;
+                case 2:
+                    break;
+                case 3:
+                    break;
             }
         }
         else if(button[Code].name == "부정2")
         {
-            if (result == 0)
+            switch (result)
             {
-
-            }
-            if (result == 1)
-            {
-
-            }
-            if (result == 2)
-            {
-
-            }
-            if (result == 3)
-            {
-
+                case 0:
+                    break;
+                case 1:
+                    break;
+                case 2:
+                    break;
+                case 3:
+                    break;
             }
         }
         else
@@ -188,7 +158,7 @@ public class Event : MonoBehaviour {
                 return 0;
             }
         }
-        if(catScript.friendly <= 60)
+        if(catScript.friendly > 30 && catScript.friendly <= 60)
         {
             if(rand <= 30)
             {
@@ -203,7 +173,7 @@ public class Event : MonoBehaviour {
                 return 0;
             }
         }
-        if(catScript.friendly <= 90)
+        if(catScript.friendly > 60)
         {
             if(rand <= 30)
             {
