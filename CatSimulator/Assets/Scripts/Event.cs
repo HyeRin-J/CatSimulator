@@ -15,6 +15,8 @@ public class Event : MonoBehaviour {
     Cat catScript;
     Animator anim;
     int rand;
+    GameObject Box1;
+    GameObject Box2;
 
     int RandomValue()
     {
@@ -28,6 +30,9 @@ public class Event : MonoBehaviour {
         //Pattern = GameObject.FindGameObjectWithTag("Pattern");
         //털 패턴 적용, Title 화면부터 동작하지 않으면 오류 나기때문에 일단 비활성화.
         //patternnum = Pattern.GetComponent<Pattern>().patternnum;
+        Box1 = GameObject.Find("cardboardBox_01");
+        Box2 = GameObject.Find("cardboardBox_02");
+        GameObject.Find("cardboardBox_02").SetActive(false);
         GameObject.Find("cu_cat2_mesh").GetComponent<Renderer>().material.mainTexture = Resources.Load("cu_cat2_" + patternnum) as Texture2D;
         catScript = Cat.GetComponent<Cat>();
         anim = Cat.GetComponent<Animator>();
@@ -39,12 +44,44 @@ public class Event : MonoBehaviour {
             int code = i;
             btn.onClick.AddListener(() => PressButton(code));
         }
+       
     }
 
     // Update is called once per frame
-    void Update () {
+    void Update()
+    {
         friendlyslider.value = catScript.friendly;
         statusslider.value = catScript.status;
+
+        if (Input.GetMouseButtonDown(0))
+        {
+            Vector3 mousePoisition = Camera.main.ScreenToViewportPoint(Input.mousePosition);
+
+            if (mousePoisition.x >= 0.2 && mousePoisition.x <= 0.3)
+            {
+                if (mousePoisition.y >= 0.1 && mousePoisition.y <= 0.4)
+                {   
+                    if (Box1.activeSelf)
+                    {
+                        Box1.SetActive(false);
+                        Box2.SetActive(true);
+                    }
+                    else if (Box2.activeSelf)
+                    {
+                        Box1.SetActive(true);
+                        Box2.SetActive(false);
+                    }
+                }
+                if(mousePoisition.y >= 0.7 && mousePoisition.y <= 0.8)
+                {
+                    Debug.Log("전등");
+                }
+            }
+            if (mousePoisition.x >= 0.7 && mousePoisition.x <= 0.8 && mousePoisition.y >= 0.1 && mousePoisition.y <= 0.2)
+            {
+                Debug.Log("털실");
+            }
+        }
     }
 
     //버튼 누르면 호출, Code 값이 계속 바뀌는 거 같음. Code로 구분하는 게 아니라 이름으로 구분해야 할듯.
