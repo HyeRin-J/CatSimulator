@@ -35,23 +35,32 @@ public class Cat : MonoBehaviour {
         {
             friendly++;
             StartTime = Time.time;
+            rand = RandomValue();
         }
 
         if (rand == (int)CatState.idle)
         {
-
+            anim.SetBool("Run", false);
+            anim.SetBool("Walk", false);
+            anim.SetBool("Play", false);
         }
         else if(rand == (int)CatState.walk)
         {
-
+            anim.SetBool("Run", false);
+            anim.SetBool("Walk", true);
+            anim.SetBool("Play", false);
         }
         else if(rand == (int)CatState.run)
         {
-
+            anim.SetBool("Run", true);
+            anim.SetBool("Walk", false);
+            anim.SetBool("Play", false);
         }
         else if(rand == (int)CatState.play)
         {
-
+            anim.SetBool("Run", false);
+            anim.SetBool("Walk", false);
+            anim.SetBool("Play", true);
         }
         else
         {
@@ -60,8 +69,9 @@ public class Cat : MonoBehaviour {
 
         AnimatorStateInfo info = anim.GetCurrentAnimatorStateInfo(0);   //현재 애니메이션 상태
         AnimatorTransitionInfo info2 = anim.GetAnimatorTransitionInfo(0);   //현재 트랜지션 상태
+        //anim.runtimeAnimatorController = Resources.Load("") as RuntimeAnimatorController; //애니메이터 변경
 
-        if (info2.IsName("F_idle -> F_sleep"))
+        if (info.IsName("F_sleep"))
         {
             Debug.Log("전환");
         }
