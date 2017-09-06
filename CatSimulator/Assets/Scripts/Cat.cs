@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
 public enum CatState {idle, walk, run, play}
 
@@ -10,6 +11,7 @@ public class Cat : MonoBehaviour {
     public float friendly = 0;
     Animator anim;
     float StartTime, EndTime;
+    NavMeshAgent agent;
 
     int RandomValue()
     {
@@ -25,6 +27,7 @@ public class Cat : MonoBehaviour {
         rand = RandomValue();
         anim = GetComponent<Animator>();
         StartTime = Time.time;
+        agent = GetComponent<NavMeshAgent>();
     }
 
     // Update is called once per frame
@@ -35,32 +38,47 @@ public class Cat : MonoBehaviour {
         {
             friendly++;
             StartTime = Time.time;
+        }
+        
+        if(agent.remainingDistance == 0)
+        {
             rand = RandomValue();
         }
 
         if (rand == (int)CatState.idle)
         {
+            if (agent.remainingDistance == 0) agent.SetDestination(transform.position);
+
             anim.SetBool("Run", false);
             anim.SetBool("Walk", false);
             anim.SetBool("Play", false);
         }
         else if(rand == (int)CatState.walk)
         {
+            if (agent.remainingDistance == 0) agent.SetDestination(new Vector3(Random.Range(-600, 700) * 0.01f, 0, Random.Range(-200, 500) * 0.01f));
+
             anim.SetBool("Run", false);
             anim.SetBool("Walk", true);
             anim.SetBool("Play", false);
         }
         else if(rand == (int)CatState.run)
         {
+            if (agent.remainingDistance == 0) agent.SetDestination(new Vector3(Random.Range(-6, 7), 0, Random.Range(-2, 5)));
+
             anim.SetBool("Run", true);
             anim.SetBool("Walk", false);
             anim.SetBool("Play", false);
         }
         else if(rand == (int)CatState.play)
         {
-            anim.SetBool("Run", false);
-            anim.SetBool("Walk", false);
-            anim.SetBool("Play", true);
+            if (agent.remainingDistance == 0)
+            {
+                agent.SetDestination(GameObject.Find("Sphere").transform.position);
+
+                anim.SetBool("Run", false);
+                anim.SetBool("Walk", false);
+                anim.SetBool("Play", true);
+            }
         }
         else
         {
