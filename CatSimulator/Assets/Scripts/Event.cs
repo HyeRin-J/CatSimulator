@@ -79,7 +79,8 @@ public class Event : MonoBehaviour {
             }
             if (mousePoisition.x >= 0.7 && mousePoisition.x <= 0.8 && mousePoisition.y >= 0.1 && mousePoisition.y <= 0.2)
             {
-                Debug.Log("털실");
+                catScript.agent.SetDestination(GameObject.Find("Sphere").transform.position);
+                catScript.agent.stoppingDistance = 2.0f;
             }
         }
     }
@@ -251,6 +252,5 @@ public class Event : MonoBehaviour {
 				return 0;
 			}
         }
-		return 0;
     }
 }
