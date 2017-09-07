@@ -182,7 +182,7 @@ public class Event : MonoBehaviour {
         }
         Debug.Log(Code + ", " + result);
     }
-    // 0이 부정적 반응, 1~3은 긍정적 반응
+    // 0이 부정적 반응, 1~3은 긍정적 반응, 숫자 클 수록 반응 정도가 달라짐
     int catFriendly()
     {
         rand = RandomValue();
@@ -213,7 +213,7 @@ public class Event : MonoBehaviour {
                 return 0;
             }
         }
-        if(catScript.friendly > 60)
+		if(catScript.friendly > 60 && catScript.friendly <= 90)
         {
             if(rand <= 30)
             {
@@ -234,7 +234,23 @@ public class Event : MonoBehaviour {
         }
         else
         {
-            return 0;
+			if(rand <= 30)
+			{
+				return 1;
+			}
+			else if(rand <= 60)
+			{
+				return 2;
+			}
+			else if(rand <= 90)
+			{
+				return 3;
+			}
+			else
+			{
+				return 0;
+			}
         }
+		return 0;
     }
 }
