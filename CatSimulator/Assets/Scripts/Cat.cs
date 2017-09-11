@@ -10,14 +10,14 @@ public class Cat : MonoBehaviour {
     public float status = 100.0f;
     public float friendly = 0;
     public Animator anim;
-    float StartTime, EndTime, AnimationTime;
+    float StartTime, EndTime, AnimationTime, UserInputTime;
     public NavMeshAgent agent;
 
     int RandomValue()
     {
         int result = 0;
 
-        result = Random.Range(0, 5);
+        result = Random.Range(0, 4);
 
         return result;
     }
@@ -27,6 +27,7 @@ public class Cat : MonoBehaviour {
         rand = RandomValue();
         anim = GetComponent<Animator>();
         StartTime = Time.time;
+		UserInputTime = 0.0f;
         agent = GetComponent<NavMeshAgent>();
     }
 
@@ -34,6 +35,7 @@ public class Cat : MonoBehaviour {
     void Update()
     {
         EndTime = Time.time;
+
         if (anim.GetBool("Sleep"))
         {
             if (EndTime - AnimationTime > 10.0f)
@@ -41,15 +43,7 @@ public class Cat : MonoBehaviour {
                 anim.SetBool("Sleep", false);
                 rand = RandomValue();
             }
-        }
-        else if (anim.GetBool("UserInput"))
-        {
-            if (EndTime - AnimationTime > 60.0f)
-            {
-                anim.SetBool("UserInput", false);
-                rand = RandomValue();
-            }
-        }
+        }        
         else
         {
             if (EndTime - AnimationTime > 5.0f)
@@ -63,10 +57,26 @@ public class Cat : MonoBehaviour {
                 anim.SetBool("Cry", false);
                 anim.SetBool("Pos1", false);
                 anim.SetBool("Pos2", false);
-                anim.SetBool("Pos3", false);
-                anim.SetBool("Nag1", false);
             }
         }
+		if (anim.GetBool("UserInput"))
+		{
+			agent.SetDestination(new Vector3(0.3f, 1.21f, -0.264f));
+
+			if (Vector3.Distance (new Vector3 (0.3f, 1.21f, -0.264f), transform.position) <= 0.3f) {
+				agent.isStopped = true;
+				anim.SetBool ("B_idle", true);
+				transform.LookAt (new Vector3 (GameObject.Find ("Main Camera").transform.position.x, GameObject.Find ("Main Camera").transform.position.y - 2.0f, GameObject.Find ("Main Camera").transform.position.z));
+			} else if (Vector3.Distance (new Vector3 (0.3f, 1.21f, -0.264f), transform.position) > 0.3f) {
+				anim.SetBool ("Run", true);
+			}
+			else if (EndTime - UserInputTime >= 60.0f) {
+				anim.SetBool ("UserInput", false);
+				anim.SetBool ("B_idle", false);
+				rand = RandomValue ();
+				UserInputTime = 0.0f;
+			}
+		}
         if (GameObject.Find("Cylinder").GetComponent<OffMeshLink>().occupied && Vector3.Distance(transform.position, GameObject.Find("Cylinder").transform.position) <= 0.5f && transform.position.y >= 1.0f)
         {
             anim.SetTrigger("JumpDown");
@@ -82,19 +92,21 @@ public class Cat : MonoBehaviour {
         }
         if (agent.remainingDistance == 0)
         {
-            rand = RandomValue();
-            agent.SetDestination(new Vector3(Random.Range(-600, 700) * 0.01f, Random.Range(0, 200) * 0.01f, Random.Range(-200, 500) * 0.01f));
+			if (!agent.pathPending) {
+				rand = RandomValue ();
+				agent.SetDestination (new Vector3 (Random.Range (-600, 700) * 0.01f, Random.Range (0, 200) * 0.01f, Random.Range (-200, 500) * 0.01f));
+			}
         }
 
         if (rand == (int)CatState.idle)
         {
-            agent.isStopped = true;
+			if (!agent.pathPending) {
+				agent.isStopped = true;
 
-            anim.SetBool("Run", false);
-            anim.SetBool("Walk", false);
-            anim.SetBool("Play", false);
-
-            
+				anim.SetBool ("Run", false);
+				anim.SetBool ("Walk", false);
+				anim.SetBool ("Play", false);
+			}
         }
 
         else if (rand == (int)CatState.walk)
@@ -104,10 +116,12 @@ public class Cat : MonoBehaviour {
                 rand = RandomValue();
                 agent.SetDestination(new Vector3(Random.Range(-600, 700) * 0.01f, 0, Random.Range(-200, 500) * 0.01f));
             }
-            agent.speed = 1;
-            anim.SetBool("Run", false);
-            anim.SetBool("Walk", true);
-            anim.SetBool("Play", false);
+			if (!agent.pathPending) {
+				agent.speed = 1;
+				anim.SetBool ("Run", false);
+				anim.SetBool ("Walk", true);
+				anim.SetBool ("Play", false);
+			}
         }
         else if (rand == (int)CatState.run)
         {
@@ -116,28 +130,37 @@ public class Cat : MonoBehaviour {
                 rand = RandomValue();
                 agent.SetDestination(new Vector3(Random.Range(-600, 700) * 0.01f, 0, Random.Range(-200, 500) * 0.01f));
             }
-            agent.speed = 2;
-            anim.SetBool("Run", true);
-            anim.SetBool("Walk", false);
-            anim.SetBool("Play", false);
+			if (!agent.pathPending) {
+				agent.speed = 2;
+				anim.SetBool ("Run", true);
+				anim.SetBool ("Walk", false);
+				anim.SetBool ("Play", false);
+			}
         }   
         else
         {
-            agent.isStopped = true;
+			if (!agent.pathPending) {
+				agent.isStopped = true;
 
-            anim.SetBool("Sleep", true);
-            anim.SetBool("Run", false);
-            anim.SetBool("Walk", false);
-            anim.SetBool("Play", false);
+				anim.SetBool ("Sleep", true);
+				anim.SetBool ("Run", false);
+				anim.SetBool ("Walk", false);
+				anim.SetBool ("Play", false);
+			}
         }
 
         AnimatorStateInfo info = anim.GetCurrentAnimatorStateInfo(0);   //현재 애니메이션 상태
         AnimatorTransitionInfo info2 = anim.GetAnimatorTransitionInfo(0);   //현재 트랜지션 상태
         //anim.runtimeAnimatorController = Resources.Load("") as RuntimeAnimatorController; //애니메이터 변경
-        if(info2.IsName("C_wiggle"))
+        if(info.IsName("C_wiggle"))
         {
-            AnimationTime = Time.time;
+			transform.LookAt (new Vector3 (GameObject.Find ("Main Camera").transform.position.x, GameObject.Find ("Main Camera").transform.position.y - 2.0f, GameObject.Find ("Main Camera").transform.position.z));
         }
+		if (info2.IsName ("AnyState -> B_idle")) {
+			if (UserInputTime == 0.0f) {
+				UserInputTime = Time.time;
+			}
+		}
         if(info.IsName("A_walk") || info.IsName("A_run"))
         {
             agent.isStopped = false;

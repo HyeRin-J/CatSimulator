@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class Event : MonoBehaviour {
 
@@ -44,7 +45,9 @@ public class Event : MonoBehaviour {
             int code = i;
             btn.onClick.AddListener(() => PressButton(code));
         }
-       
+
+		GameObject.Find ("입력").GetComponent<Button> ().onClick.AddListener (() => SetUserInput());
+		GameObject.Find("초기화").GetComponent<Button>().onClick.AddListener(() => Initallize());
     }
 
     // Update is called once per frame
@@ -85,41 +88,53 @@ public class Event : MonoBehaviour {
         }
     }
 
+	public void SetUserInput(){
+		anim.SetBool ("UserInput", true);
+	}
+
+	public void Initallize(){
+		SceneManager.LoadScene ("Main");
+	}
+
     //버튼 누르면 호출, Code 값이 계속 바뀌는 거 같음. Code로 구분하는 게 아니라 이름으로 구분해야 할듯.
     public void PressButton(int Code)
-    {
-        int result = catFriendly();
-        catScript.agent.SetDestination(new Vector3(0.3f, 1.21f, -0.264f));
-        catScript.agent.isStopped = true;
-        
-        if (button[Code].name == "긍정1")
-        {
-            switch (result)
-            {
-                case 0:
-                    break;
-                case 1:
-                    break;
-                case 2:
-                    break;
-                case 3:
-                    break;
-            }
-        }
-        else if(button[Code].name == "긍정2")
-        {
-            switch (result)
-            {
-                case 0:
-                    break;
-                case 1:
-                    break;
-                case 2:
-                    break;
-                case 3:
-                    break;
-            }
-        }
+	{
+		int result = 0;
+		if (anim.GetBool ("UserInput")) {
+			result = catFriendly ();
+		
+
+			if (button [Code].name == "긍정1") {
+				switch (result) {
+				case 0:
+					anim.SetTrigger ("Nag1");
+
+					break;
+				case 1:
+					anim.SetBool ("Pos1", true);
+					
+					break;
+				case 2:
+					anim.SetBool ("Pos2", true);
+
+					break;
+				}
+			} else if (button [Code].name == "긍정2") {
+				switch (result) {
+				case 0:
+					anim.SetTrigger ("Nag1");
+
+					break;
+				case 1:
+					anim.SetBool ("Pos1", true);
+
+					break;
+				case 2:
+					anim.SetBool ("Pos2", true);
+					break;
+				}
+			}
+		/*
         else if(button[Code].name == "긍정3")
         {
             switch (result)
@@ -147,22 +162,21 @@ public class Event : MonoBehaviour {
                 case 3:
                     break;
             }
-        }
-        else if(button[Code].name == "부정1")
-        {
-            switch (result)
-            {
-                case 0:
-                    anim.SetBool("Nag1", true);
-                    break;
-                case 1:
-                    break;
-                case 2:
-                    break;
-                case 3:
-                    break;
-            }
-        }
+        }*/
+        else if (button [Code].name == "부정1") {
+				switch (result) {
+				case 0:
+					anim.SetTrigger ("Nag1");
+					break;
+				case 1:
+					break;
+				case 2:
+					break;
+				case 3:
+					break;
+				}
+			}
+		/*
         else if (button[Code].name == "부정2")
         {
             switch (result)
@@ -177,22 +191,24 @@ public class Event : MonoBehaviour {
                 case 3:
                     break;
             }
-        }
-        else if (button[Code].name == "동작X"){
-            Debug.Log("랜덤행동");
-        }
-        else
-        {
-            Debug.Log("??");
-        }
-        Debug.Log(Code + ", " + result);
+        }*/
+        else if (button [Code].name == "동작X") {
+				Debug.Log ("랜덤행동");
+			} else {
+				Debug.Log ("??");
+				anim.SetTrigger ("Cry");
+			}
+			catScript.agent.isStopped = true;
+			anim.SetBool ("UserInput", false);
+			anim.SetBool ("B_idle", false);
+		}
     }
     // 0이 부정적 반응, 1~3은 긍정적 반응, 숫자 클 수록 반응 정도가 달라짐
     int catFriendly()
     {
         rand = RandomValue();
 
-        if(catScript.friendly <= 30)
+        if(catScript.friendly <= 35)
         {
             if(rand <= catScript.friendly)
             {
@@ -203,34 +219,15 @@ public class Event : MonoBehaviour {
                 return 0;
             }
         }
-        if(catScript.friendly > 30 && catScript.friendly <= 60)
+        if(catScript.friendly > 35 && catScript.friendly <= 70)
         {
-            if(rand <= 30)
+            if(rand <= 35)
             {
                 return 1;
             }
             else if(rand <= catScript.friendly)
             {
                 return 2;
-            }
-            else
-            {
-                return 0;
-            }
-        }
-		if(catScript.friendly > 60 && catScript.friendly <= 90)
-        {
-            if(rand <= 30)
-            {
-                return 1;
-            }
-            else if(rand <= 60)
-            {
-                return 2;
-            }
-            else if(rand <= catScript.friendly)
-            {
-                return 3;
             }
             else
             {
@@ -239,17 +236,13 @@ public class Event : MonoBehaviour {
         }
         else
         {
-			if(rand <= 30)
+			if(rand <= 35)
 			{
 				return 1;
 			}
-			else if(rand <= 60)
+			else if(rand <= 70)
 			{
 				return 2;
-			}
-			else if(rand <= 90)
-			{
-				return 3;
 			}
 			else
 			{
