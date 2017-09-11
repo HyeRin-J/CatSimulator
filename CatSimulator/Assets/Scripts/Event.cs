@@ -89,8 +89,10 @@ public class Event : MonoBehaviour {
     public void PressButton(int Code)
     {
         int result = catFriendly();
-
-        if(button[Code].name == "긍정1")
+        catScript.agent.SetDestination(new Vector3(0.3f, 1.21f, -0.264f));
+        catScript.agent.isStopped = true;
+        
+        if (button[Code].name == "긍정1")
         {
             switch (result)
             {
@@ -151,6 +153,7 @@ public class Event : MonoBehaviour {
             switch (result)
             {
                 case 0:
+                    anim.SetBool("Nag1", true);
                     break;
                 case 1:
                     break;
@@ -160,11 +163,12 @@ public class Event : MonoBehaviour {
                     break;
             }
         }
-        else if(button[Code].name == "부정2")
+        else if (button[Code].name == "부정2")
         {
             switch (result)
             {
                 case 0:
+                    anim.SetBool("Nag1", true);
                     break;
                 case 1:
                     break;
@@ -174,7 +178,7 @@ public class Event : MonoBehaviour {
                     break;
             }
         }
-        if(button[Code].name == "동작X"){
+        else if (button[Code].name == "동작X"){
             Debug.Log("랜덤행동");
         }
         else
