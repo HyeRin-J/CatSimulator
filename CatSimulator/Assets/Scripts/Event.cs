@@ -100,7 +100,6 @@ public class Event : MonoBehaviour {
     public void PressButton(int Code)
 	{
 		int result = 0;
-		if (anim.GetBool ("UserInput")) {
 			result = catFriendly ();
 		
 
@@ -201,7 +200,6 @@ public class Event : MonoBehaviour {
 			catScript.agent.isStopped = true;
 			anim.SetBool ("UserInput", false);
 			anim.SetBool ("B_idle", false);
-		}
     }
     // 0이 부정적 반응, 1~3은 긍정적 반응, 숫자 클 수록 반응 정도가 달라짐
     int catFriendly()

@@ -28,14 +28,14 @@ public class Cat : MonoBehaviour {
         anim = GetComponent<Animator>();
         StartTime = Time.time;
 		UserInputTime = 0.0f;
-        agent = GetComponent<NavMeshAgent>();
+        //agent = GetComponent<NavMeshAgent>();
     }
 
     // Update is called once per frame
     void Update()
     {
         EndTime = Time.time;
-
+        transform.LookAt(new Vector3(GameObject.Find("Main Camera").transform.position.x, GameObject.Find("Main Camera").transform.position.y - 2.0f, GameObject.Find("Main Camera").transform.position.z));
         if (anim.GetBool("Sleep"))
         {
             if (EndTime - AnimationTime > 10.0f)
@@ -66,7 +66,7 @@ public class Cat : MonoBehaviour {
 			if (Vector3.Distance (new Vector3 (1.1f, 1.17f, -0.79f), transform.position) <= 0.3f) {
 				agent.isStopped = true;
 				anim.SetBool ("B_idle", true);
-				transform.LookAt (new Vector3 (GameObject.Find ("Main Camera").transform.position.x, GameObject.Find ("Main Camera").transform.position.y - 2.0f, GameObject.Find ("Main Camera").transform.position.z));
+				
 			} else if (Vector3.Distance (new Vector3 (1.1f, 1.17f, -0.79f), transform.position) > 0.3f) {
 				anim.SetBool ("Run", true);
 			}
@@ -77,14 +77,15 @@ public class Cat : MonoBehaviour {
 				UserInputTime = 0.0f;
 			}
 		}
+        /*
         if (GameObject.Find("Cylinder").GetComponent<OffMeshLink>().occupied && Vector3.Distance(transform.position, GameObject.Find("Cylinder").transform.position) <= 0.5f && transform.position.y >= 1.0f)
         {
             anim.SetTrigger("JumpDown");
         }
         if (GameObject.Find("Cylinder").GetComponent<OffMeshLink>().occupied && Vector3.Distance(transform.position, GameObject.Find("Cylinder (1)").transform.position) <= 0.5f && transform.position.y < 1.0f)
         {
-
-        }
+            anim.SetTrigger("Jump");
+        }*/
             if (EndTime - StartTime > 5.0f)
         {
             friendly++;
