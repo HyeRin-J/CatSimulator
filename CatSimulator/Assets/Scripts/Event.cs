@@ -28,9 +28,9 @@ public class Event : MonoBehaviour {
 
     // Use this for initialization
     void Start () {
-        //Pattern = GameObject.FindGameObjectWithTag("Pattern");
+        Pattern = GameObject.FindGameObjectWithTag("Pattern");
         //털 패턴 적용, Title 화면부터 동작하지 않으면 오류 나기때문에 일단 비활성화.
-        //patternnum = Pattern.GetComponent<Pattern>().patternnum;
+        patternnum = Pattern.GetComponent<Pattern>().patternnum;
         Box1 = GameObject.Find("cardboardBox_01");
         Box2 = GameObject.Find("cardboardBox_02");
         GameObject.Find("cardboardBox_02").SetActive(false);
@@ -39,22 +39,22 @@ public class Event : MonoBehaviour {
         anim = Cat.GetComponent<Animator>();
         button = GameObject.FindGameObjectsWithTag("Button");
         //버튼 onClick에 함수 등록, 버튼 6개
-        for(int i = 0; i < 6; i++)
+		for(int i = 0; i < button.Length; i++)
         {
             Button btn = button[i].GetComponent<Button>();
             int code = i;
             btn.onClick.AddListener(() => PressButton(code));
         }
 
-		GameObject.Find ("입력").GetComponent<Button> ().onClick.AddListener (() => SetUserInput());
+		//GameObject.Find ("입력").GetComponent<Button> ().onClick.AddListener (() => SetUserInput());
 		GameObject.Find("초기화").GetComponent<Button>().onClick.AddListener(() => Initallize());
     }
 
     // Update is called once per frame
     void Update()
     {
-        friendlyslider.value = catScript.friendly;
-        statusslider.value = catScript.status;
+        //friendlyslider.value = catScript.friendly;
+        //statusslider.value = catScript.status;
 
         if (Input.GetMouseButtonDown(0))
         {

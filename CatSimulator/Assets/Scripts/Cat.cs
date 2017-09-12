@@ -61,13 +61,13 @@ public class Cat : MonoBehaviour {
         }
 		if (anim.GetBool("UserInput"))
 		{
-			agent.SetDestination(new Vector3(0.3f, 1.21f, -0.264f));
+			agent.SetDestination(new Vector3(1.1f, 1.17f, -0.79f));
 
-			if (Vector3.Distance (new Vector3 (0.3f, 1.21f, -0.264f), transform.position) <= 0.3f) {
+			if (Vector3.Distance (new Vector3 (1.1f, 1.17f, -0.79f), transform.position) <= 0.3f) {
 				agent.isStopped = true;
 				anim.SetBool ("B_idle", true);
 				transform.LookAt (new Vector3 (GameObject.Find ("Main Camera").transform.position.x, GameObject.Find ("Main Camera").transform.position.y - 2.0f, GameObject.Find ("Main Camera").transform.position.z));
-			} else if (Vector3.Distance (new Vector3 (0.3f, 1.21f, -0.264f), transform.position) > 0.3f) {
+			} else if (Vector3.Distance (new Vector3 (1.1f, 1.17f, -0.79f), transform.position) > 0.3f) {
 				anim.SetBool ("Run", true);
 			}
 			else if (EndTime - UserInputTime >= 60.0f) {
