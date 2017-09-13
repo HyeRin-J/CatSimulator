@@ -13,6 +13,7 @@ public class Event : MonoBehaviour{
     public GameObject Cat;
     GameObject Pattern;
     GameObject food;
+	GameObject Light;
     Cat catScript;
     Animator anim;
     int rand;
@@ -52,6 +53,7 @@ public class Event : MonoBehaviour{
         patternnum = Pattern.GetComponent<Pattern>().patternnum;
         Box1 = GameObject.Find("cardboardBox_01");
         Box2 = GameObject.Find("cardboardBox_02");
+		Light = GameObject.Find("Point light");
         GameObject.Find("cardboardBox_02").SetActive(false);
         GameObject.Find("cu_cat2_mesh").GetComponent<Renderer>().material.mainTexture = Resources.Load("cu_cat2_" + patternnum) as Texture2D;
         catScript = Cat.GetComponent<Cat>();
@@ -65,7 +67,7 @@ public class Event : MonoBehaviour{
             btn.onClick.AddListener(() => PressButton(code));
         }
 
-		//GameObject.Find ("입력").GetComponent<Button> ().onClick.AddListener (() => SetUserInput());
+		GameObject.Find ("입력").GetComponent<Button> ().onClick.AddListener (() => SetUserInput());
 		GameObject.Find("초기화").GetComponent<Button>().onClick.AddListener(() => Initallize());
     }
 
@@ -74,6 +76,7 @@ public class Event : MonoBehaviour{
 	{
         //friendlyslider.value = catScript.friendly;
 		//statusslider.value = catScript.status;
+
 		KinectManager kinectManager = KinectManager.Instance;
 		if ((!kinectManager || !kinectManager.IsInitialized () || !kinectManager.IsUserDetected ())) {
 			anim.SetBool ("UserInput", false);
@@ -86,11 +89,10 @@ public class Event : MonoBehaviour{
 			kinectManager.DetectGesture(userId, KinectGestures.Gestures.RaiseLeftHand);
 		}
 
-
-
         if (Input.GetMouseButtonDown(0))
         {
             Vector3 mousePoisition = Camera.main.ScreenToViewportPoint(Input.mousePosition);
+			Debug.Log (mousePoisition);
 
             if (mousePoisition.x >= 0.2 && mousePoisition.x <= 0.3)
             {
@@ -107,11 +109,10 @@ public class Event : MonoBehaviour{
                         Box2.SetActive(false);
                     }
                 }
-                if(mousePoisition.y >= 0.7 && mousePoisition.y <= 0.8)
-                {
-                    Debug.Log("전등");
-                }
             }
+			if(mousePoisition.x >= 0.0 && mousePoisition.x <= 0.1 && mousePoisition.y >= 0.7 && mousePoisition.y <= 0.8){
+				Light.GetComponent<Light> ().enabled = !Light.GetComponent<Light> ().enabled;
+			}
             if (mousePoisition.x >= 0.7 && mousePoisition.x <= 0.8 && mousePoisition.y >= 0.1 && mousePoisition.y <= 0.2)
             {
                 catScript.agent.SetDestination(GameObject.Find("Sphere").transform.position);

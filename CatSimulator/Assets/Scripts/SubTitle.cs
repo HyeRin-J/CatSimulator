@@ -37,17 +37,17 @@ public class SubTitle : MonoBehaviour {
     {
         int w = Screen.width / 2;
         int h = Screen.height / 2;
-        if (GUI.Button(new Rect(w - 150, h * 1.1f, 120, 50), "<"))
+        if (GUI.Button(new Rect(w - 300, h * 1.1f, 120, 50), "<"))
         {
             PrevPattern();
             startTime = Time.time;
         }
-        if (GUI.Button(new Rect(w + 150, h * 1.1f, 120, 50), ">"))
+        if (GUI.Button(new Rect(w + 100, h * 1.1f, 120, 50), ">"))
         {
             NextPattern();
             startTime = Time.time;
         }
-        if (GUI.Button(new Rect(w, h * 1.4f, 120, 50), "OK"))
+        if (GUI.Button(new Rect(w - 100, h * 1.4f, 120, 50), "OK"))
         {
             LoadScene();
         }
