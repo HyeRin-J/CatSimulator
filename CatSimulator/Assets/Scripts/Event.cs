@@ -28,9 +28,9 @@ public class Event : MonoBehaviour {
 
     // Use this for initialization
     void Start () {
-        Pattern = GameObject.FindGameObjectWithTag("Pattern");
+        //Pattern = GameObject.FindGameObjectWithTag("Pattern");
         //털 패턴 적용, Title 화면부터 동작하지 않으면 오류 나기때문에 일단 비활성화.
-        patternnum = Pattern.GetComponent<Pattern>().patternnum;
+        //patternnum = Pattern.GetComponent<Pattern>().patternnum;
         Box1 = GameObject.Find("cardboardBox_01");
         Box2 = GameObject.Find("cardboardBox_02");
         GameObject.Find("cardboardBox_02").SetActive(false);
@@ -157,7 +157,7 @@ public class Event : MonoBehaviour {
                 case 1:
                     break;
                 case 2:
-                    break;
+                    break;ㄴ
                 case 3:
                     break;
             }
