@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
-public class Event : MonoBehaviour {
+public class Event : MonoBehaviour{
 
     GameObject[] button;
     int patternnum = 1;
@@ -17,7 +17,26 @@ public class Event : MonoBehaviour {
     Animator anim;
     int rand;
     GameObject Box1;
-    GameObject Box2;
+	GameObject Box2;
+
+	public void GestureInProgress(uint userId, int userIndex, KinectGestures.Gestures gesture, 
+		float progress, KinectWrapper.NuiSkeletonPositionIndex joint, Vector3 screenPos)
+	{
+		// don't do anything here
+	}
+
+	public bool GestureCompleted (uint userId, int userIndex, KinectGestures.Gestures gesture, 
+		KinectWrapper.NuiSkeletonPositionIndex joint, Vector3 screenPos)
+	{
+		return true;
+	}
+
+	public bool GestureCancelled (uint userId, int userIndex, KinectGestures.Gestures gesture, 
+		KinectWrapper.NuiSkeletonPositionIndex joint)
+	{
+		// don't do anything here, just reset the gesture state
+		return true;
+	}
 
     int RandomValue()
     {
@@ -27,10 +46,10 @@ public class Event : MonoBehaviour {
     }
 
     // Use this for initialization
-    void Start () {
-        //Pattern = GameObject.FindGameObjectWithTag("Pattern");
+	void Start () {
+        Pattern = GameObject.FindGameObjectWithTag("Pattern");
         //털 패턴 적용, Title 화면부터 동작하지 않으면 오류 나기때문에 일단 비활성화.
-        //patternnum = Pattern.GetComponent<Pattern>().patternnum;
+        patternnum = Pattern.GetComponent<Pattern>().patternnum;
         Box1 = GameObject.Find("cardboardBox_01");
         Box2 = GameObject.Find("cardboardBox_02");
         GameObject.Find("cardboardBox_02").SetActive(false);
@@ -51,10 +70,23 @@ public class Event : MonoBehaviour {
     }
 
     // Update is called once per frame
-    void Update()
-    {
+	void Update()
+	{
         //friendlyslider.value = catScript.friendly;
-        //statusslider.value = catScript.status;
+		//statusslider.value = catScript.status;
+		KinectManager kinectManager = KinectManager.Instance;
+		if ((!kinectManager || !kinectManager.IsInitialized () || !kinectManager.IsUserDetected ())) {
+			anim.SetBool ("UserInput", false);
+			//Debug.Log ("Kinect dead.");
+		}else{
+			anim.SetBool ("UserInput", true);
+			//Debug.Log ("Kinect is Detecting");
+			uint userId = kinectManager.GetPlayer1ID ();
+			kinectManager.DetectGesture(userId, KinectGestures.Gestures.RaiseRightHand);
+			kinectManager.DetectGesture(userId, KinectGestures.Gestures.RaiseLeftHand);
+		}
+
+
 
         if (Input.GetMouseButtonDown(0))
         {
@@ -100,6 +132,7 @@ public class Event : MonoBehaviour {
     public void PressButton(int Code)
 	{
 		int result = 0;
+		if (anim.GetBool ("UserInput")) {
 			result = catFriendly ();
 		
 
@@ -157,7 +190,7 @@ public class Event : MonoBehaviour {
                 case 1:
                     break;
                 case 2:
-                    break;ㄴ
+                    break;
                 case 3:
                     break;
             }
@@ -200,6 +233,7 @@ public class Event : MonoBehaviour {
 			catScript.agent.isStopped = true;
 			anim.SetBool ("UserInput", false);
 			anim.SetBool ("B_idle", false);
+		}
     }
     // 0이 부정적 반응, 1~3은 긍정적 반응, 숫자 클 수록 반응 정도가 달라짐
     int catFriendly()

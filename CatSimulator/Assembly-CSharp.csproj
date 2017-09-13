@@ -50,6 +50,26 @@
      <Compile Include="Assets\Scripts\Event.cs" />
      <Compile Include="Assets\Scripts\Pattern.cs" />
      <Compile Include="Assets\Scripts\SubTitle.cs" />
+     <Compile Include="Assets\kinectscript\AvatarController.cs" />
+     <Compile Include="Assets\kinectscript\AvatarControllerClassic.cs" />
+     <Compile Include="Assets\kinectscript\Cubeman\CubemanController.cs" />
+     <Compile Include="Assets\kinectscript\Filters\BoneOrientationsConstraint.cs" />
+     <Compile Include="Assets\kinectscript\Filters\BoneOrientationsFilter.cs" />
+     <Compile Include="Assets\kinectscript\Filters\ClippedLegsFilter.cs" />
+     <Compile Include="Assets\kinectscript\Filters\JointPositionsFilter.cs" />
+     <Compile Include="Assets\kinectscript\Filters\KinectHelper.cs" />
+     <Compile Include="Assets\kinectscript\Filters\SelfIntersectionConstraint.cs" />
+     <Compile Include="Assets\kinectscript\Filters\TimedLerp.cs" />
+     <Compile Include="Assets\kinectscript\Filters\TrackingStateFilter.cs" />
+     <Compile Include="Assets\kinectscript\KinectGestures.cs" />
+     <Compile Include="Assets\kinectscript\KinectManager.cs" />
+     <Compile Include="Assets\kinectscript\KinectWrapper.cs" />
+     <Compile Include="Assets\kinectscript\Samples\FollowUserRotation.cs" />
+     <Compile Include="Assets\kinectscript\Samples\GetJointPositionDemo.cs" />
+     <Compile Include="Assets\kinectscript\Samples\LoadMainLevel.cs" />
+     <Compile Include="Assets\kinectscript\Samples\MouseControl.cs" />
+     <Compile Include="Assets\kinectscript\Samples\SetSceneAvatars.cs" />
+     <Compile Include="Assets\kinectscript\Samples\SimpleGestureListener.cs" />
      <None Include="Assets\cu_cat2\Shaders\RimWrap.shader" />
  <Reference Include="UnityEngine.UI">
  <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll</HintPath>
