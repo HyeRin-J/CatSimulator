@@ -79,7 +79,7 @@ public class Event : MonoBehaviour{
 	void Update()
 	{
         //friendlyslider.value = catScript.friendly;
-		//statusslider.value = catScript.status;
+        //statusslider.value = catScript.status;
         /*
 		KinectManager kinectManager = KinectManager.Instance;
 		if ((!kinectManager || !kinectManager.IsInitialized () || !kinectManager.IsUserDetected ())) {
@@ -93,6 +93,17 @@ public class Event : MonoBehaviour{
 			kinectManager.DetectGesture(userId, KinectGestures.Gestures.RaiseLeftHand);
 		}
         */
+        GameObject light = GameObject.Find("Directional Light");
+        light.transform.Rotate(0, 5 * Time.deltaTime, 0);
+        Debug.Log(light.transform.rotation);
+        if (light.transform.rotation.x >= 0.6f || light.transform.rotation.x <= -0.6)
+        {
+            light.GetComponent<Light>().intensity = 0;
+        }
+        else
+        {
+            light.GetComponent<Light>().intensity = 1;
+        }
         if (Input.GetMouseButtonDown(0))
         {
             Vector3 mousePoisition = Camera.main.ScreenToViewportPoint(Input.mousePosition);
