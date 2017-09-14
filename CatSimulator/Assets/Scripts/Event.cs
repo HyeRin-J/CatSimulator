@@ -19,7 +19,9 @@ public class Event : MonoBehaviour{
     int rand;
     GameObject Box1;
 	GameObject Box2;
-
+    GameObject emo;
+    AudioSource audio;
+    /*
 	public void GestureInProgress(uint userId, int userIndex, KinectGestures.Gestures gesture, 
 		float progress, KinectWrapper.NuiSkeletonPositionIndex joint, Vector3 screenPos)
 	{
@@ -38,19 +40,19 @@ public class Event : MonoBehaviour{
 		// don't do anything here, just reset the gesture state
 		return true;
 	}
-
+    */
     int RandomValue()
     {
         int RandValue = Random.Range(0, 101);
 
         return RandValue;
     }
-
+    
     // Use this for initialization
 	void Start () {
-        Pattern = GameObject.FindGameObjectWithTag("Pattern");
+        //Pattern = GameObject.FindGameObjectWithTag("Pattern");
         //털 패턴 적용, Title 화면부터 동작하지 않으면 오류 나기때문에 일단 비활성화.
-        patternnum = Pattern.GetComponent<Pattern>().patternnum;
+        //patternnum = Pattern.GetComponent<Pattern>().patternnum;
         Box1 = GameObject.Find("cardboardBox_01");
         Box2 = GameObject.Find("cardboardBox_02");
 		Light = GameObject.Find("Point light");
@@ -59,6 +61,8 @@ public class Event : MonoBehaviour{
         catScript = Cat.GetComponent<Cat>();
         anim = Cat.GetComponent<Animator>();
         button = GameObject.FindGameObjectsWithTag("Button");
+        emo = GameObject.Find("Emoticon");
+        emo.SetActive(false);
         //버튼 onClick에 함수 등록, 버튼 6개
 		for(int i = 0; i < button.Length; i++)
         {
@@ -66,7 +70,7 @@ public class Event : MonoBehaviour{
             int code = i;
             btn.onClick.AddListener(() => PressButton(code));
         }
-
+        audio = GameObject.Find("cu_cat2_model").GetComponent<AudioSource>();
 		GameObject.Find ("입력").GetComponent<Button> ().onClick.AddListener (() => SetUserInput());
 		GameObject.Find("초기화").GetComponent<Button>().onClick.AddListener(() => Initallize());
     }
@@ -76,7 +80,7 @@ public class Event : MonoBehaviour{
 	{
         //friendlyslider.value = catScript.friendly;
 		//statusslider.value = catScript.status;
-
+        /*
 		KinectManager kinectManager = KinectManager.Instance;
 		if ((!kinectManager || !kinectManager.IsInitialized () || !kinectManager.IsUserDetected ())) {
 			anim.SetBool ("UserInput", false);
@@ -88,11 +92,10 @@ public class Event : MonoBehaviour{
 			kinectManager.DetectGesture(userId, KinectGestures.Gestures.RaiseRightHand);
 			kinectManager.DetectGesture(userId, KinectGestures.Gestures.RaiseLeftHand);
 		}
-
+        */
         if (Input.GetMouseButtonDown(0))
         {
             Vector3 mousePoisition = Camera.main.ScreenToViewportPoint(Input.mousePosition);
-			Debug.Log (mousePoisition);
 
             if (mousePoisition.x >= 0.2 && mousePoisition.x <= 0.3)
             {
@@ -135,38 +138,47 @@ public class Event : MonoBehaviour{
 		int result = 0;
 		if (anim.GetBool ("UserInput")) {
 			result = catFriendly ();
-		
-
+            emo.SetActive(true);
 			if (button [Code].name == "긍정1") {
-				switch (result) {
-				case 0:
-					anim.SetTrigger ("Nag1");
-
-					break;
-				case 1:
-					anim.SetBool ("Pos1", true);
-					
-					break;
-				case 2:
-					anim.SetBool ("Pos2", true);
-
-					break;
-				}
+                switch (result) {
+                    case 0:
+                        anim.SetTrigger ("Nag1");
+                        emo.GetComponent<MeshRenderer>().material.mainTexture = Resources.Load("angry") as Texture2D;
+                        audio.clip = Resources.Load("Sounds/Angry_Cat") as AudioClip;
+                        audio.Play();
+                        break;
+				    case 1:
+					    anim.SetBool ("Pos1", true);
+                        emo.GetComponent<MeshRenderer>().material.mainTexture = Resources.Load("happy") as Texture2D;
+                        audio.clip = Resources.Load("Sounds/Cat-meow-sound-2") as AudioClip;
+                        audio.Play();
+                        break;
+				    case 2:
+					    anim.SetBool ("Pos2", true);
+                        emo.GetComponent<MeshRenderer>().material.mainTexture = Resources.Load("love") as Texture2D;
+                        break;
+				    }
 			} else if (button [Code].name == "긍정2") {
-				switch (result) {
-				case 0:
-					anim.SetTrigger ("Nag1");
-
-					break;
-				case 1:
-					anim.SetBool ("Pos1", true);
-
-					break;
-				case 2:
-					anim.SetBool ("Pos2", true);
-					break;
-				}
-			}
+                switch (result)
+                {
+                    case 0:
+                        anim.SetTrigger("Nag1");
+                        emo.GetComponent<MeshRenderer>().material.mainTexture = Resources.Load("angry") as Texture2D;
+                        audio.clip = Resources.Load("Sounds/Angry_Cat") as AudioClip;
+                        audio.Play();
+                        break;
+                    case 1:
+                        anim.SetBool("Pos1", true);
+                        emo.GetComponent<MeshRenderer>().material.mainTexture = Resources.Load("happy") as Texture2D;
+                        audio.clip = Resources.Load("Sounds/Cat-meow-sound-2") as AudioClip;
+                        audio.Play();
+                        break;
+                    case 2:
+                        anim.SetBool("Pos2", true);
+                        emo.GetComponent<MeshRenderer>().material.mainTexture = Resources.Load("love") as Texture2D;
+                        break;
+                }
+            }
 		/*
         else if(button[Code].name == "긍정3")
         {
@@ -198,15 +210,18 @@ public class Event : MonoBehaviour{
         }*/
         else if (button [Code].name == "부정1") {
 				switch (result) {
-				case 0:
-					anim.SetTrigger ("Nag1");
-					break;
-				case 1:
-					break;
-				case 2:
-					break;
-				case 3:
-					break;
+				    case 0:
+					    anim.SetTrigger ("Nag1");
+                        emo.GetComponent<MeshRenderer>().material.mainTexture = Resources.Load("sad") as Texture;
+                        audio.clip = Resources.Load("Sounds/Cat-noises") as AudioClip;
+                        audio.Play();
+                        break;
+				    case 1:
+					    break;
+				    case 2:
+					    break;
+				    case 3:
+					    break;
 				}
 			}
 		/*

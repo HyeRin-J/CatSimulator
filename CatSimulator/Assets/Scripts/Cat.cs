@@ -8,17 +8,19 @@ public enum CatState {idle, walk, run, play}
 public class Cat : MonoBehaviour {
     int rand = 0;
     public float status = 100.0f;
-    public float friendly = 0;
+    public float friendly = 50.0f;
     public Animator anim;
     float StartTime, EndTime, AnimationTime, UserInputTime;
     public NavMeshAgent agent;
+    bool jumpdown = false;
+    public GameObject emo;
 
     int RandomValue()
     {
         int result = 0;
 
         result = Random.Range(0, 4);
-
+        
         return result;
     }
 
@@ -35,15 +37,14 @@ public class Cat : MonoBehaviour {
     void Update()
     {
         EndTime = Time.time;
-
-		if (anim.GetBool("UserInput"))
+        
+        if (anim.GetBool("UserInput"))
 		{
 			agent.SetDestination(new Vector3(1.06f, 1.14f, -0.46f));
 
 			if (Vector3.Distance (new Vector3 (1.06f, 1.14f, -0.46f), transform.position) <= 0.3f) {
 				agent.isStopped = true;
 				anim.SetBool ("B_idle", true);
-				transform.LookAt (new Vector3 (GameObject.Find ("Main Camera").transform.position.x, GameObject.Find ("Main Camera").transform.position.y - 2.0f, GameObject.Find ("Main Camera").transform.position.z));
 			} else if (Vector3.Distance (new Vector3 (1.06f, 1.14f, -0.46f), transform.position) > 0.3f) {
 				anim.SetBool ("Run", true);
 			}
@@ -55,15 +56,15 @@ public class Cat : MonoBehaviour {
 			}
 		}
 
-		if (GameObject.Find("Cylinder").GetComponent<OffMeshLink>().occupied && Vector3.Distance(transform.position, GameObject.Find("Cylinder").transform.position) <= 1f)
+		if (GameObject.Find("Cylinder").GetComponent<OffMeshLink>().occupied && Vector3.Distance(transform.position, GameObject.Find("Cylinder").transform.position) <= 0.5f)
         {
             anim.SetTrigger("JumpDown");
         }
-		if (GameObject.Find("Cylinder (1)").GetComponent<OffMeshLink>().occupied && Vector3.Distance(transform.position, GameObject.Find("Cylinder (1)").transform.position) <= 1f)
+		if (GameObject.Find("Cylinder (1)").GetComponent<OffMeshLink>().occupied && Vector3.Distance(transform.position, GameObject.Find("Cylinder (1)").transform.position) <= 0.8f)
         {
 			anim.SetTrigger("Jump");
         }
-            if (EndTime - StartTime > 5.0f)
+        if (EndTime - StartTime > 5.0f)
         {
             friendly++;
             StartTime = Time.time;
@@ -147,17 +148,35 @@ public class Cat : MonoBehaviour {
         AnimatorStateInfo info = anim.GetCurrentAnimatorStateInfo(0);   //현재 애니메이션 상태
         AnimatorTransitionInfo info2 = anim.GetAnimatorTransitionInfo(0);   //현재 트랜지션 상태
         //anim.runtimeAnimatorController = Resources.Load("") as RuntimeAnimatorController; //애니메이터 변경
-        if(info.IsName("C_wiggle"))
+        if (info2.IsName("AnyState -> A_jump_down"))
+        {
+            jumpdown = true;
+        }
+        if (info2.IsName("A_jump_down -> A_idle"))
+        {
+            jumpdown = false;
+        }
+        if (info.IsName("E_idle"))
+        {
+            agent.isStopped = true;
+        }
+        if (info.IsName("C_wiggle") || info.IsName("B_idle") || info.IsName("B_cry") || info.IsName("D_chodai"))
         {
 			transform.LookAt (new Vector3 (GameObject.Find ("Main Camera").transform.position.x, GameObject.Find ("Main Camera").transform.position.y - 2.0f, GameObject.Find ("Main Camera").transform.position.z));
+            agent.isStopped = true;
         }
 		if (info2.IsName ("AnyState -> B_idle")) {
 			if (UserInputTime == 0.0f) {
 				UserInputTime = Time.time;
 			}
-		}
-        if(info.IsName("A_walk") || info.IsName("A_run"))
+        }
+        if(info.IsName("A_idle") || info.IsName("C_sleep"))
         {
+            emo.SetActive(false);
+        }
+        if (info.IsName("A_walk") || info.IsName("A_run"))
+        {
+            emo.SetActive(false);
             agent.isStopped = false;
         }
         if (info2.IsName("C_idle -> C_sleep") || info2.IsName("A_walk -> A_idle") || info2.IsName("A_run -> A_idle"))
