@@ -73,11 +73,12 @@ public class Event : MonoBehaviour{
         audio = GameObject.Find("cu_cat2_model").GetComponent<AudioSource>();
 		GameObject.Find ("입력").GetComponent<Button> ().onClick.AddListener (() => SetUserInput());
 		GameObject.Find("초기화").GetComponent<Button>().onClick.AddListener(() => Initallize());
+        GameObject.Find("끼임탈출").GetComponent<Button>().onClick.AddListener(() => ExitTerrian());
     }
 
     // Update is called once per frame
-	void Update()
-	{
+    void Update()
+    {
         //friendlyslider.value = catScript.friendly;
         //statusslider.value = catScript.status;
         /*
@@ -95,7 +96,6 @@ public class Event : MonoBehaviour{
         */
         GameObject light = GameObject.Find("Directional Light");
         light.transform.Rotate(0, 5 * Time.deltaTime, 0);
-        Debug.Log(light.transform.rotation);
         if (light.transform.rotation.x >= 0.6f || light.transform.rotation.x <= -0.6)
         {
             light.GetComponent<Light>().intensity = 0;
@@ -104,35 +104,11 @@ public class Event : MonoBehaviour{
         {
             light.GetComponent<Light>().intensity = 1;
         }
-        if (Input.GetMouseButtonDown(0))
-        {
-            Vector3 mousePoisition = Camera.main.ScreenToViewportPoint(Input.mousePosition);
+    }
 
-            if (mousePoisition.x >= 0.2 && mousePoisition.x <= 0.3)
-            {
-                if (mousePoisition.y >= 0.1 && mousePoisition.y <= 0.4)
-                {   
-                    if (Box1.activeSelf)
-                    {
-                        Box1.SetActive(false);
-                        Box2.SetActive(true);
-                    }
-                    else if (Box2.activeSelf)
-                    {
-                        Box1.SetActive(true);
-                        Box2.SetActive(false);
-                    }
-                }
-            }
-			if(mousePoisition.x >= 0.0 && mousePoisition.x <= 0.1 && mousePoisition.y >= 0.7 && mousePoisition.y <= 0.8){
-				Light.GetComponent<Light> ().enabled = !Light.GetComponent<Light> ().enabled;
-			}
-            if (mousePoisition.x >= 0.7 && mousePoisition.x <= 0.8 && mousePoisition.y >= 0.1 && mousePoisition.y <= 0.2)
-            {
-                catScript.agent.SetDestination(GameObject.Find("Sphere").transform.position);
-                catScript.agent.stoppingDistance = 2.0f;
-            }
-        }
+    public void ExitTerrian()
+    {
+        Cat.transform.position = new Vector3(Cat.transform.position.x, 0.0f, Cat.transform.position.z);
     }
 
 	public void SetUserInput(){

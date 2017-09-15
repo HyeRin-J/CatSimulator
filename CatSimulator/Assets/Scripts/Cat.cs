@@ -56,7 +56,7 @@ public class Cat : MonoBehaviour {
 			}
 		}
 
-		if (GameObject.Find("Cylinder").GetComponent<OffMeshLink>().occupied && Vector3.Distance(transform.position, GameObject.Find("Cylinder").transform.position) <= 0.5f)
+        if (GameObject.Find("Cylinder").GetComponent<OffMeshLink>().occupied && Vector3.Distance(transform.position, GameObject.Find("Cylinder").transform.position) <= 0.5f)
         {
             anim.SetTrigger("JumpDown");
         }
@@ -182,6 +182,14 @@ public class Cat : MonoBehaviour {
         if (info2.IsName("C_idle -> C_sleep") || info2.IsName("A_walk -> A_idle") || info2.IsName("A_run -> A_idle"))
         {
             AnimationTime = Time.time;
+        }
+    }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (collision.collider.name.Equals("Sphere"))
+        {
+            Debug.Log("?");
         }
     }
 }
