@@ -6,7 +6,7 @@ using System.Net.Sockets;
 
 public class Client : MonoBehaviour {
     public string m_IPAdress = "127.0.0.1";
-    public const int kPort = 8088;
+    public const int kPort = 9999;
     private static Client singleton;
     private Socket m_Socket;
 

@@ -17,19 +17,19 @@ Platform assembly: D:\CatSimulator\CatSimulator\Test_Data\Managed\UnityEngine.Ne
 Loading D:\CatSimulator\CatSimulator\Test_Data\Managed\UnityEngine.Networking.dll into Unity Child Domain
 Platform assembly: D:\CatSimulator\CatSimulator\Test_Data\Managed\UnityEngine.Analytics.dll (this message is harmless)
 Loading D:\CatSimulator\CatSimulator\Test_Data\Managed\UnityEngine.Analytics.dll into Unity Child Domain
-- Completed reload, in  0.102 seconds
+- Completed reload, in  0.101 seconds
 Platform assembly: D:\CatSimulator\CatSimulator\Test_Data\Managed\System.Core.dll (this message is harmless)
 Platform assembly: D:\CatSimulator\CatSimulator\Test_Data\Managed\System.dll (this message is harmless)
 desktop: 1366x768 60Hz; virtual: 1366x768 at 0,0
 <RI> Initializing input.
 <RI> Input initialized.
 <RI> Initialized touch support.
-UnloadTime: 0.932529 ms
+UnloadTime: 52.970665 ms
 Setting up 2 worker threads for Enlighten.
-  Thread -> id: 46c4 -> priority: 1 
-  Thread -> id: 3724 -> priority: 1 
+  Thread -> id: 91c -> priority: 1 
+  Thread -> id: 3a84 -> priority: 1 
 Unloading 6 Unused Serialized files (Serialized files now loaded: 0)
-UnloadTime: 3.887926 ms
+UnloadTime: 20.792400 ms
 Fallback handler could not load library D:/CatSimulator/CatSimulator/Test_Data/Mono/Kinect10.dll
 Fallback handler could not load library D:/CatSimulator/CatSimulator/Test_Data/Mono/.\Kinect10.dll
 Fallback handler could not load library D:/CatSimulator/CatSimulator/Test_Data/Mono/Kinect10.dll
@@ -85,137 +85,13 @@ System.DllNotFoundException: Kinect10.dll
  
 (Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
 
-
-Unloading 31 unused Assets to reduce memory usage. Loaded Objects now: 774.
-Total: 0.472255 ms (FindLiveObjects: 0.042374 ms CreateObjectMapping: 0.018995 ms MarkObjects: 0.282301 ms  DeleteObjects: 0.128292 ms)
-
-Start listening
+Connecting
  
 (Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
 
-Did Connect
- 
-(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
 
-Message Hello : 497, 280
- 
-(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
-
-Message Hello : 580, 387
- 
-(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
-
-Message Hello : 584, 340
- 
-(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
-
-Message Hello : 450, 284
- 
-(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
-
-Message Hello : 302, 364
- 
-(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
-
-Message Hello : 541, 369
- 
-(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
-
-Message Hello : 575, 328
- 
-(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
-
-Message Hello : 529, 290
- 
-(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
-
-Message Hello : 351, 302
- 
-(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
-
-Message Hello : 346, 369
- 
-(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
-
-Message Hello : 430, 405
- 
-(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
-
-Message Hello : 287, 314
- 
-(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
-
-Message Hello : 493, 331
- 
-(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
-
-Message Hello : 599, 394
- 
-(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
-
-Message Hello : 539, 434
- 
-(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
-
-Message Hello : 498, 429
- 
-(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
-
-Message Hello : 518, 340
- 
-(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
-
-Did Connect
- 
-(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
-
-Message Hello : 595, 324
- 
-(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
-
-Message Hello : 512, 316
- 
-(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
-
-Message Hello : 405, 401
- 
-(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
-
-Message Hello : 483, 459
- 
-(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
-
-Message Hello : 571, 359
- 
-(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
-
-Did Connect
- 
-(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
-
-Message Hello : 506, 284
- 
-(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
-
-Message Hello : 457, 282
- 
-(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
-
-Message Hello : 317, 321
- 
-(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
-
-Message Hello : 387, 437
- 
-(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
-
-Message Hello : 498, 453
- 
-(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
-
-Message Hello : 526, 389
- 
-(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+Unloading 34 unused Assets to reduce memory usage. Loaded Objects now: 778.
+Total: 12.459835 ms (FindLiveObjects: 0.038283 ms CreateObjectMapping: 0.019287 ms MarkObjects: 12.288000 ms  DeleteObjects: 0.113680 ms)
 
 Fallback handler could not load library D:/CatSimulator/CatSimulator/Test_Data/Mono/Kinect10.dll
 Fallback handler could not load library D:/CatSimulator/CatSimulator/Test_Data/Mono/.\Kinect10.dll
