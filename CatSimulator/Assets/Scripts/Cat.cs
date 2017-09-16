@@ -12,7 +12,6 @@ public class Cat : MonoBehaviour {
     public Animator anim;
     float StartTime, EndTime, AnimationTime, UserInputTime;
     public NavMeshAgent agent;
-    bool jumpdown = false;
     public GameObject emo;
 
     int RandomValue()
@@ -148,14 +147,7 @@ public class Cat : MonoBehaviour {
         AnimatorStateInfo info = anim.GetCurrentAnimatorStateInfo(0);   //현재 애니메이션 상태
         AnimatorTransitionInfo info2 = anim.GetAnimatorTransitionInfo(0);   //현재 트랜지션 상태
         //anim.runtimeAnimatorController = Resources.Load("") as RuntimeAnimatorController; //애니메이터 변경
-        if (info2.IsName("AnyState -> A_jump_down"))
-        {
-            jumpdown = true;
-        }
-        if (info2.IsName("A_jump_down -> A_idle"))
-        {
-            jumpdown = false;
-        }
+
         if (info.IsName("E_idle"))
         {
             agent.isStopped = true;
