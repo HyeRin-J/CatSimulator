@@ -71,7 +71,7 @@ public class Event : MonoBehaviour{
             btn.onClick.AddListener(() => PressButton(code));
         }
         audio = GameObject.Find("cu_cat2_model").GetComponent<AudioSource>();
-		GameObject.Find ("입력").GetComponent<Button> ().onClick.AddListener (() => SetUserInput());
+		//GameObject.Find ("입력").GetComponent<Button> ().onClick.AddListener (() => SetUserInput());
 		GameObject.Find("초기화").GetComponent<Button>().onClick.AddListener(() => Initallize());
         GameObject.Find("끼임탈출").GetComponent<Button>().onClick.AddListener(() => ExitTerrian());
     }
@@ -143,6 +143,8 @@ public class Event : MonoBehaviour{
 				    case 2:
 					    anim.SetBool ("Pos2", true);
                         emo.GetComponent<MeshRenderer>().material.mainTexture = Resources.Load("love") as Texture2D;
+                        audio.clip = Resources.Load("Sounds/Cat-meow-sound-2") as AudioClip;
+
                         break;
 				    }
 			} else if (button [Code].name == "긍정2") {
@@ -163,6 +165,8 @@ public class Event : MonoBehaviour{
                     case 2:
                         anim.SetBool("Pos2", true);
                         emo.GetComponent<MeshRenderer>().material.mainTexture = Resources.Load("love") as Texture2D;
+                        audio.clip = Resources.Load("Sounds/Cat-meow-sound-2") as AudioClip;
+
                         break;
                 }
             }
