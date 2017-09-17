@@ -46,12 +46,12 @@ public class Cat : MonoBehaviour {
 		EndTime = Time.time;
 
 		if (anim.GetBool ("UserInput")) {
-			agent.SetDestination (new Vector3 (1.19f, 1.3f, -0.46f));
-			if (Vector3.Distance (new Vector3 (1.19f, 1.3f, -0.46f), transform.position) <= 0.3f) {
+			agent.SetDestination (new Vector3 (1.0f, 1.17f, -0.2f));
+			if (Vector3.Distance (new Vector3 (1.0f, 1.17f, -0.2f), transform.position) <= 0.3f) {
 				agent.isStopped = true;
 				anim.SetBool ("B_idle", true);
-				GameObject.Find ("Cylinder").GetComponent<OffMeshLink> ().activated = false;
-			} else if (Vector3.Distance (new Vector3 (1.19f, 1.3f, -0.46f), transform.position) > 0.3f) {
+				GameObject.Find ("Sofa").GetComponent<OffMeshLink> ().activated = false;
+			} else if (Vector3.Distance (new Vector3 (1.0f, 1.17f, -0.2f), transform.position) > 0.3f) {
 				anim.SetBool ("Run", true);
 			}
 			if (EndTime - UserInputTime >= 60.0f) {
@@ -59,12 +59,11 @@ public class Cat : MonoBehaviour {
 				anim.SetBool ("B_idle", false);
 				rand = RandomValue ();
 				UserInputTime = 0.0f;
-				GameObject.Find ("Cylinder").GetComponent<OffMeshLink> ().activated = true;
+				GameObject.Find ("Sofa").GetComponent<OffMeshLink> ().activated = true;
 			}
 		} else {
-			GameObject.Find ("Cylinder").GetComponent<OffMeshLink> ().activated = true;
-		}			
-
+			GameObject.Find ("Sofa").GetComponent<OffMeshLink> ().activated = true;
+		}
 		if (agent.isOnOffMeshLink) {
 			if (!jump) {
 				offMeshLinkData = agent.currentOffMeshLinkData;
@@ -85,46 +84,56 @@ public class Cat : MonoBehaviour {
 
 				agent.isStopped = true;
 
-				if(Vector3.Distance(offMeshLinkData.startPos, GameObject.Find("Cylinder").transform.position) <= 0.2f){
+				if(Vector3.Distance(offMeshLinkData.startPos, GameObject.Find("Sofa").transform.position) <= 0.2f){
 					anim.SetBool ("JumpDown", true);
 					anim.SetBool ("Jump", false);
-				}else if(Vector3.Distance(offMeshLinkData.startPos, GameObject.Find("Cylinder (1)").transform.position) <= 0.3f){
+				}else if(Vector3.Distance(offMeshLinkData.startPos, GameObject.Find("Plane (1)").transform.position) <= 0.3f){
 					anim.SetBool ("Jump", true);
 					anim.SetBool ("JumpDown", false);
 				}
+			} else {				
+				jumpDeltaTime += Time.deltaTime;
+				float factor = jumpDeltaTime / jumpTotalTime;
+				bool isOffMeshLinkComplete = false;
 
+				if (anim.GetBool ("Jump")) {
+					if(factor > 0.5f)
+						isOffMeshLinkComplete = true;
+				} else if (anim.GetBool ("JumpDown")) {
+					if (factor > 1.0f)
+						isOffMeshLinkComplete = true;
+				}
+
+				if (isOffMeshLinkComplete) {
+					transform.position = offMeshLinkData.endPos;
+
+					agent.CompleteOffMeshLink ();
+					agent.isStopped = false;
+
+					jump = false;
+
+					anim.SetBool ("Jump", false);
+					anim.SetBool ("JumpDown", false);
 				} else {
-					jumpDeltaTime += Time.deltaTime;
-
-					float factor = jumpDeltaTime / jumpTotalTime;
-
-					if (factor >= 1.0f) {
-						transform.position = offMeshLinkData.endPos;
-
-						agent.CompleteOffMeshLink ();
-
-						agent.isStopped = false;
-
-						jump = false;
-
-						anim.SetBool ("Jump", false);
-						anim.SetBool ("JumpDown", false);
-					} else {
-					Vector3 pos = Vector3.zero;
+					Vector3 pos = Vector3.Lerp (jumpStartPos, offMeshLinkData.endPos, factor);
+					GameObject target = null;
+					Vector3 vec = Vector3.zero;
 					if (anim.GetBool ("JumpDown")) {
 						jumpHeight = -0.8f;
-						pos = Vector3.Lerp (jumpStartPos, offMeshLinkData.endPos, factor);
 						pos.y -= Mathf.Sin (Mathf.PI * factor) * jumpHeight;
+						target = GameObject.Find ("Plane (1)");
 					} else if (anim.GetBool ("Jump")) {
 						jumpHeight = 0.8f;
-						pos = Vector3.Lerp (jumpStartPos, offMeshLinkData.endPos, factor);
 						pos.y += Mathf.Sin (Mathf.PI * factor) * jumpHeight;
+						target = GameObject.Find ("Sofa");
 					}
 					transform.position = pos;
+					vec = (target.transform.position - transform.position).normalized;
+					Quaternion toQuaternion = Quaternion.LookRotation (vec);
+					transform.rotation = Quaternion.Slerp (transform.rotation, toQuaternion, 3.0f * Time.deltaTime);
 				}
 			}
-
-		}					
+		}
 
         if (EndTime - StartTime > 5.0f)
         {
@@ -233,6 +242,8 @@ public class Cat : MonoBehaviour {
         {
             emo.SetActive(false);
             agent.isStopped = false;
+			if (jump)
+				jump = false;
         }
         if (info2.IsName("C_idle -> C_sleep") || info2.IsName("A_walk -> A_idle") || info2.IsName("A_run -> A_idle"))
         {
