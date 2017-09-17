@@ -67,7 +67,7 @@ public class Event : MonoBehaviour{
 			//return se;
 			Debug.Log ("Socket Exception");
 		}*/
-		        Pattern = GameObject.FindGameObjectWithTag("Pattern");
+		Pattern = GameObject.FindGameObjectWithTag("Pattern");
         //털 패턴 적용, Title 화면부터 동작하지 않으면 오류 나기때문에 일단 비활성화.
         patternnum = Pattern.GetComponent<Pattern>().patternnum;
         GameObject.Find("cardboardBox_02").SetActive(false);
@@ -85,9 +85,6 @@ public class Event : MonoBehaviour{
             btn.onClick.AddListener(() => PressButton(code));
         }
         audio = GameObject.Find("cu_cat2_model").GetComponent<AudioSource>();
-		//GameObject.Find ("입력").GetComponent<Button> ().onClick.AddListener (() => SetUserInput());
-		GameObject.Find("초기화").GetComponent<Button>().onClick.AddListener(() => Initallize());
-        GameObject.Find("끼임탈출").GetComponent<Button>().onClick.AddListener(() => ExitTerrian());
     }
 
     // Update is called once per frame
@@ -98,10 +95,10 @@ public class Event : MonoBehaviour{
         
 		KinectManager kinectManager = KinectManager.Instance;
 		if ((!kinectManager || !kinectManager.IsInitialized () || !kinectManager.IsUserDetected ())) {
-			//anim.SetBool ("UserInput", false);
+			anim.SetBool ("UserInput", false);
 			//Debug.Log ("Kinect dead.");
 		}else{
-			//anim.SetBool ("UserInput", true);
+			anim.SetBool ("UserInput", true);
 			//Debug.Log ("Kinect is Detecting");
 			uint userId = kinectManager.GetPlayer1ID ();
 			kinectManager.DetectGesture(userId, KinectGestures.Gestures.RaiseRightHand);
@@ -120,15 +117,6 @@ public class Event : MonoBehaviour{
         }
     }
 
-    public void ExitTerrian()
-    {
-        Cat.transform.position = new Vector3(Cat.transform.position.x, 0.0f, Cat.transform.position.z);
-    }
-
-	public void SetUserInput(){
-		anim.SetBool ("UserInput", true);
-	}
-
 	public void Initallize(){
 		SceneManager.LoadScene ("Main");
 	}
@@ -137,6 +125,11 @@ public class Event : MonoBehaviour{
     public void PressButton(int Code)
 	{
 		int result = 0;
+
+		if(Input.GetKey(KeyCode.Space)){
+			Initallize ();
+		}
+
 		if (anim.GetBool ("UserInput")) {
 			result = catFriendly ();
             emo.SetActive(true);

@@ -13,6 +13,14 @@ public class Cat : MonoBehaviour {
     float StartTime, EndTime, AnimationTime, UserInputTime;
     public NavMeshAgent agent;
     public GameObject emo;
+	public bool jump;
+	private OffMeshLinkData offMeshLinkData;
+	Vector3 jumpStartPos = Vector3.zero;
+	float jumpSpeed = 2.0f;
+	float jumpHeight = -0.8f;
+	float jumpDistance = 0.0f;
+	float jumpTotalTime = 0.0f;
+	float jumpDeltaTime = 0.0f;
 
     int RandomValue()
     {
@@ -34,35 +42,90 @@ public class Cat : MonoBehaviour {
 
     // Update is called once per frame
     void Update()
-    {
-        EndTime = Time.time;
-        
-        if (anim.GetBool("UserInput"))
-		{
-			agent.SetDestination(new Vector3(1.06f, 1.14f, -0.46f));
+	{
+		EndTime = Time.time;
 
-			if (Vector3.Distance (new Vector3 (1.06f, 1.14f, -0.46f), transform.position) <= 0.3f) {
+		if (anim.GetBool ("UserInput")) {
+			agent.SetDestination (new Vector3 (1.19f, 1.3f, -0.46f));
+			if (Vector3.Distance (new Vector3 (1.19f, 1.3f, -0.46f), transform.position) <= 0.3f) {
 				agent.isStopped = true;
 				anim.SetBool ("B_idle", true);
-			} else if (Vector3.Distance (new Vector3 (1.06f, 1.14f, -0.46f), transform.position) > 0.3f) {
+				GameObject.Find ("Cylinder").GetComponent<OffMeshLink> ().activated = false;
+			} else if (Vector3.Distance (new Vector3 (1.19f, 1.3f, -0.46f), transform.position) > 0.3f) {
 				anim.SetBool ("Run", true);
 			}
-			else if (EndTime - UserInputTime >= 60.0f) {
+			if (EndTime - UserInputTime >= 60.0f) {
 				anim.SetBool ("UserInput", false);
 				anim.SetBool ("B_idle", false);
 				rand = RandomValue ();
 				UserInputTime = 0.0f;
+				GameObject.Find ("Cylinder").GetComponent<OffMeshLink> ().activated = true;
 			}
-		}
+		} else {
+			GameObject.Find ("Cylinder").GetComponent<OffMeshLink> ().activated = true;
+		}			
 
-        if (GameObject.Find("Cylinder").GetComponent<OffMeshLink>().occupied && Vector3.Distance(transform.position, GameObject.Find("Cylinder").transform.position) <= 0.5f)
-        {
-            anim.SetTrigger("JumpDown");
-        }
-		if (GameObject.Find("Cylinder (1)").GetComponent<OffMeshLink>().occupied && Vector3.Distance(transform.position, GameObject.Find("Cylinder (1)").transform.position) <= 0.8f)
-        {
-			anim.SetTrigger("Jump");
-        }
+		if (agent.isOnOffMeshLink) {
+			if (!jump) {
+				offMeshLinkData = agent.currentOffMeshLinkData;
+				jump = true;
+
+				jumpStartPos = transform.position;
+
+				Vector3 dirToJump = offMeshLinkData.endPos - jumpStartPos;
+
+				jumpDistance = dirToJump.magnitude;
+
+				jumpTotalTime = jumpDistance / jumpSpeed;
+
+				jumpDeltaTime = 0.0f;
+
+				dirToJump.y = 0.0f;
+				dirToJump *= 1.0f / jumpDistance;
+
+				agent.isStopped = true;
+
+				if(Vector3.Distance(offMeshLinkData.startPos, GameObject.Find("Cylinder").transform.position) <= 0.2f){
+					anim.SetBool ("JumpDown", true);
+					anim.SetBool ("Jump", false);
+				}else if(Vector3.Distance(offMeshLinkData.startPos, GameObject.Find("Cylinder (1)").transform.position) <= 0.3f){
+					anim.SetBool ("Jump", true);
+					anim.SetBool ("JumpDown", false);
+				}
+
+				} else {
+					jumpDeltaTime += Time.deltaTime;
+
+					float factor = jumpDeltaTime / jumpTotalTime;
+
+					if (factor >= 1.0f) {
+						transform.position = offMeshLinkData.endPos;
+
+						agent.CompleteOffMeshLink ();
+
+						agent.isStopped = false;
+
+						jump = false;
+
+						anim.SetBool ("Jump", false);
+						anim.SetBool ("JumpDown", false);
+					} else {
+					Vector3 pos = Vector3.zero;
+					if (anim.GetBool ("JumpDown")) {
+						jumpHeight = -0.8f;
+						pos = Vector3.Lerp (jumpStartPos, offMeshLinkData.endPos, factor);
+						pos.y -= Mathf.Sin (Mathf.PI * factor) * jumpHeight;
+					} else if (anim.GetBool ("Jump")) {
+						jumpHeight = 0.8f;
+						pos = Vector3.Lerp (jumpStartPos, offMeshLinkData.endPos, factor);
+						pos.y += Mathf.Sin (Mathf.PI * factor) * jumpHeight;
+					}
+					transform.position = pos;
+				}
+			}
+
+		}					
+
         if (EndTime - StartTime > 5.0f)
         {
             friendly++;
@@ -175,6 +238,9 @@ public class Cat : MonoBehaviour {
         {
             AnimationTime = Time.time;
         }
+		if (info.IsName ("A_jump_down") && transform.position.y <= 0.05f) {
+			anim.SetBool ("JumpDown", false);
+		}
     }
 
     private void OnCollisionEnter(Collision collision)
