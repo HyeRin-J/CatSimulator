@@ -47,8 +47,11 @@
   </ItemGroup>
   <ItemGroup>
      <Compile Include="Assets\Scripts\Cat.cs" />
+     <Compile Include="Assets\Scripts\Client.cs" />
      <Compile Include="Assets\Scripts\Event.cs" />
+     <Compile Include="Assets\Scripts\MessageData.cs" />
      <Compile Include="Assets\Scripts\Pattern.cs" />
+     <Compile Include="Assets\Scripts\Server.cs" />
      <Compile Include="Assets\Scripts\SubTitle.cs" />
      <Compile Include="Assets\kinectscript\AvatarController.cs" />
      <Compile Include="Assets\kinectscript\AvatarControllerClassic.cs" />
@@ -70,6 +73,7 @@
      <Compile Include="Assets\kinectscript\Samples\MouseControl.cs" />
      <Compile Include="Assets\kinectscript\Samples\SetSceneAvatars.cs" />
      <Compile Include="Assets\kinectscript\Samples\SimpleGestureListener.cs" />
+     <None Include="Assets\Resources\Sounds\Read.txt" />
      <None Include="Assets\cu_cat2\Shaders\RimWrap.shader" />
  <Reference Include="UnityEngine.UI">
  <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll</HintPath>

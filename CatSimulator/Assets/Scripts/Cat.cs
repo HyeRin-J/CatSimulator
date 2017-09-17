@@ -164,11 +164,11 @@ public class Cat : MonoBehaviour {
         }
         if(info.IsName("A_idle") || info.IsName("C_sleep"))
         {
-            emo.SetActive(false);
+            //emo.SetActive(false);
         }
         if (info.IsName("A_walk") || info.IsName("A_run"))
         {
-            emo.SetActive(false);
+            //emo.SetActive(false);
             agent.isStopped = false;
         }
         if (info2.IsName("C_idle -> C_sleep") || info2.IsName("A_walk -> A_idle") || info2.IsName("A_run -> A_idle"))
