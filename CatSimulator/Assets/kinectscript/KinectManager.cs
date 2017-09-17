@@ -855,6 +855,7 @@ public class KinectManager : MonoBehaviour
 		}
 	}
 	
+	
 	//----------------------------------- end of public functions --------------------------------------//
 
 	void Awake()

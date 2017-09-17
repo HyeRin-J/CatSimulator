@@ -1,118 +1,130 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.UI;
+﻿using UnityEngine;
+using System.Collections;
+using System.Threading;
 using System.Net;
 using System.Net.Sockets;
-using System.Text;
+using System.IO;
+using System;
 
-class Server : MonoBehaviour
-{
-    static Server singleton;
-    private Socket m_socket;
-    ArrayList m_Connections = new ArrayList();
-    ArrayList m_Buffer = new ArrayList();
-    ArrayList m_ByteBuffer = new ArrayList();
-    private void Awake()
-    {
-        m_socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-        IPEndPoint ipLocal = new IPEndPoint(IPAddress.Any, Client.kPort);
-        m_socket.Bind(ipLocal);
+public class Server : MonoBehaviour {
+	private bool mRunning;
+	public static string msg = "";
 
-        m_socket.Listen(10);
-        singleton = this;
-    }
-    private void Start()
-    {
-        Debug.Log("Start listening");
-    }
-    private void OnApplicationQuit()
-    {
-        Cleanup();
-    }
-    void Cleanup()
-    {
-        if (m_socket != null)
-            m_socket.Close();
+	public Thread mThread;
+	public TcpListener tcp_Listener = null;
+	public TcpClient client;
+	public NetworkStream stream;
 
-        m_socket = null;
+	private static int frame = 0;
+	private static string buffer = "";
 
-        foreach (Socket con in m_Connections)
-            con.Close();
-        m_Connections.Clear();
-    }
-    ~Server()
-    {
-        Cleanup();
-    }
-    private void Update()
-    {
-        ArrayList listenList = new ArrayList();
-        listenList.Add(m_socket);
-        Socket.Select(listenList, null, null, 1000);
-        for(int i = 0; i < listenList.Count; i++)
-        {
-            Socket newSocket = ((Socket)listenList[i]).Accept();
-            m_Connections.Add(newSocket);
-            m_ByteBuffer.Add(new ArrayList());
-            Debug.Log("Did Connect");
-        }
-        if(m_Connections.Count != 0)
-        {
-            ArrayList connections = new ArrayList(m_Connections);
-            Socket.Select(connections, null, null, 1000);
+	void Awake() {
+		mRunning = true;
+		ThreadStart ts = new ThreadStart(Receive);
+		mThread = new Thread(ts);
+		mThread.Start();
+		print("Thread done...");
+	}
+	void Start(){
+		mRunning = true;
+	}
 
-            foreach(Socket socket in connections)
-            {
-                byte[] receivedbytes = new byte[1024];
+	public void stopListening() {
+		mRunning = false;
+	}
 
-                ArrayList buffer = (ArrayList)m_ByteBuffer[m_Connections.IndexOf(socket)];
-                int read = socket.Receive(receivedbytes);
-                for (int i = 0; i < read; i++)
-                    buffer.Add(receivedbytes[i]);
+	public static void setData(int iframe,string ibuffer){
+		frame = iframe;
+		buffer = ibuffer;
+	}
 
-                while(true && buffer.Count > 0)
-                {
-                    int length = (byte)buffer[0];
 
-                    if (length < buffer.Count)
-                    {
-                        ArrayList thismsgBytes = new ArrayList(buffer);
-                        thismsgBytes.RemoveRange(length + 1, thismsgBytes.Count - (length + 1));
-                        thismsgBytes.RemoveRange(0, 1);
-                        if (thismsgBytes.Count != length)
-                            Debug.Log("Bug");
+	void Receive()
+	{  
+		tcp_Listener=null;  
+		try
+		{
 
-                        buffer.RemoveRange(0, length + 1);
-                        byte[] readbytes = (byte[])thismsgBytes.ToArray(typeof(byte));
-                        MessageData readMsg = MessageData.FromByteArray(readbytes);
-                        m_Buffer.Add(readMsg);
-                        Debug.Log(System.String.Format("Message {0} : {1}, {2}", readMsg.stringData, readMsg.mousex, readMsg.mousey));
 
-                        if (singleton != this)
-                            Debug.LogError("Bug");
-                    }
-                    else
-                        break;
-                }
-            }
-        }
-        
-    }
-    static public MessageData PopMessage()
-    {
-        if(singleton.m_Buffer.Count == 0)
-        {
-            return null;
-        }
-        else
-        {
-            MessageData readMsg = (MessageData)singleton.m_Buffer[0];
-            singleton.m_Buffer.RemoveAt(0);
-            Debug.Log(System.String.Format("Message {0} : {1}, {2}", readMsg.stringData, readMsg.mousex, readMsg.mousey));
-            return readMsg;
-        }
-    }
+			// TcpListener server = new TcpListener(port);
+			tcp_Listener = new TcpListener(IPAddress.Parse("127.0.0.1"), 9999);
 
-    
+			// Start listening for client requests.
+			tcp_Listener.Start();
+
+			// Buffer for reading data
+			byte[] bytes = new byte[1024];
+			byte[] msg1 = new byte[1024];
+			string data = null;
+
+			// Enter the listening loop.
+			while(true)
+			{
+				Thread.Sleep(10);
+
+				Debug.Log("Waiting for a connection... ");
+
+				// Perform a blocking call to accept requests.
+				// You could also user server.AcceptSocket() here.
+				client = tcp_Listener.AcceptTcpClient();
+
+
+				if(client!=null){
+
+					Debug.Log("Connected!");
+					//isConnection=true;
+					//client.Close();
+					//break;
+
+				}
+				data = null;
+
+				stream = client.GetStream();
+				StreamWriter swriter=new StreamWriter(stream);
+				int i;
+
+				// Loop to receive all the data sent by the client.
+				while((i = stream.Read(bytes, 0, bytes.Length))!=0)
+				{  
+					//msg1 = System.Text.Encoding.ASCII.GetBytes(prevdata);
+
+					// Send back a response.
+					//stream.Write(msg1, 0, msg1.Length);
+					// Translate data bytes to a ASCII string.
+					string str = System.Text.Encoding.UTF8.GetString (bytes);
+					if(str[0] == 'R'){	//ready
+						Debug.Log("Ready");
+						//ㅇㅕㄱㅣㄱㅏ ㅌㅔㅅㅡㅌㅡ ㅍㅏㅇㅣㄹ
+						//ㅇㅣㄱㅓ ㄷㅐㅅㅣㄴㅇㅔ 
+
+						stream.Write(msg1, 0, msg1.Length);
+					}
+					Debug.Log (11);
+					Debug.Log (str);
+
+
+					Array.Clear(bytes, 0, bytes.Length);
+					//data = System.Text.Encoding.ASCII.GetString(bytes, 0, i);
+					
+				}
+			}
+		}
+		catch(SocketException e)
+		{
+			Debug.Log("SocketException:"+ e);
+		}
+		finally
+		{
+			// Stop listening for new clients.
+			stopListening();
+		}
+	}
+	void Update() {
+
+	}
+
+	void OnApplicationQuit() { // stop listening thread
+		stopListening();// wait for listening thread to terminate (max. 500ms)
+		mThread.Join(500);
+	}
 }
