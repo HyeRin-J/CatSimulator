@@ -44,7 +44,8 @@ public class Cat : MonoBehaviour {
     void Update()
 	{
 		EndTime = Time.time;
-
+		KinectManager kinectManager = KinectManager.Instance;
+		bool ready = Server.readyToUser;
 		if (anim.GetBool ("UserInput")) {
 			agent.SetDestination (new Vector3 (1.0f, 1.17f, -0.2f));
 			if (Vector3.Distance (new Vector3 (1.0f, 1.17f, -0.2f), transform.position) <= 0.3f) {
@@ -54,7 +55,7 @@ public class Cat : MonoBehaviour {
 			} else if (Vector3.Distance (new Vector3 (1.0f, 1.17f, -0.2f), transform.position) > 0.3f) {
 				anim.SetBool ("Run", true);
 			}
-			if (EndTime - UserInputTime >= 60.0f) {
+			if (EndTime - UserInputTime >= 60.0f && !kinectManager.IsUserDetected ()) {
 				anim.SetBool ("UserInput", false);
 				anim.SetBool ("B_idle", false);
 				rand = RandomValue ();
@@ -252,13 +253,5 @@ public class Cat : MonoBehaviour {
 		if (info.IsName ("A_jump_down") && transform.position.y <= 0.05f) {
 			anim.SetBool ("JumpDown", false);
 		}
-    }
-
-    private void OnCollisionEnter(Collision collision)
-    {
-        if (collision.collider.name.Equals("Sphere"))
-        {
-            Debug.Log("?");
-        }
     }
 }

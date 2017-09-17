@@ -303,15 +303,17 @@ public class KinectGestures
 		} else {
 			frameTrigger = true;
 		}
+
+
 		if (frameTrigger) {
-			if (frame ==3) {
-				frameBuffer = frameBuffer.Substring (0, frameBuffer.Length - 1);
-				TCP.setData (frame, frameBuffer);
-				//TCP.writeSocket (frame + "");
-				//TCP.writeSocket (frameBuffer);
+			if (frameBuffer.Length > 0) {
+				frameBuffer = frameBuffer.Substring (0, frameBuffer.Length-1);
+				Server.frame = frame;
+				Server.fdata = frameBuffer;
+				frameTrigger = false;
+				frame = 0;
+				frameBuffer = "";
 			}
-			frameTrigger = false;
-			frame = 0;
 		}
 	}
 
