@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 using System.Net;
 using System.Net.Sockets;
 
@@ -30,9 +31,9 @@ public class Client : MonoBehaviour {
 	void Start () {
 		
 	}
-	
-	// Update is called once per frame
-	void Update () {
+
+    // Update is called once per frame
+    void Update() {
         if (Input.GetMouseButtonUp(0))
         {
             MessageData newmsg = new MessageData();
@@ -42,7 +43,8 @@ public class Client : MonoBehaviour {
             newmsg.type = 0;
             Client.Send(newmsg);
         }
-	}
+    }
+
     static public void Send(MessageData msgData)
     {
         if (singleton.m_Socket == null)

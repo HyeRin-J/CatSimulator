@@ -18,7 +18,7 @@ public class Event : MonoBehaviour{
     int rand;
     GameObject emo;
     new AudioSource audio;
-    
+    /*
 	public void GestureInProgress(uint userId, int userIndex, KinectGestures.Gestures gesture, 
 		float progress, KinectWrapper.NuiSkeletonPositionIndex joint, Vector3 screenPos)
 	{
@@ -37,7 +37,7 @@ public class Event : MonoBehaviour{
 		// don't do anything here, just reset the gesture state
 		return true;
 	}
-    
+    */
     int RandomValue()
     {
         int RandValue = Random.Range(0, 101);
@@ -47,9 +47,9 @@ public class Event : MonoBehaviour{
     
     // Use this for initialization
 	void Start () {
-        Pattern = GameObject.FindGameObjectWithTag("Pattern");
+        //Pattern = GameObject.FindGameObjectWithTag("Pattern");
         //털 패턴 적용, Title 화면부터 동작하지 않으면 오류 나기때문에 일단 비활성화.
-        patternnum = Pattern.GetComponent<Pattern>().patternnum;
+        //patternnum = Pattern.GetComponent<Pattern>().patternnum;
         GameObject.Find("cardboardBox_02").SetActive(false);
         GameObject.Find("cu_cat2_mesh").GetComponent<Renderer>().material.mainTexture = Resources.Load("cu_cat2_" + patternnum) as Texture2D;
         catScript = Cat.GetComponent<Cat>();
@@ -75,7 +75,7 @@ public class Event : MonoBehaviour{
     {
         //friendlyslider.value = catScript.friendly;
         //statusslider.value = catScript.status;
-        
+        /*
 		KinectManager kinectManager = KinectManager.Instance;
 		if ((!kinectManager || !kinectManager.IsInitialized () || !kinectManager.IsUserDetected ())) {
 			anim.SetBool ("UserInput", false);
@@ -87,7 +87,7 @@ public class Event : MonoBehaviour{
 			kinectManager.DetectGesture(userId, KinectGestures.Gestures.RaiseRightHand);
 			kinectManager.DetectGesture(userId, KinectGestures.Gestures.RaiseLeftHand);
 		}
-        
+        */
         GameObject light = GameObject.Find("Directional Light");
         light.transform.Rotate(0, 5 * Time.deltaTime, 0);
         if (light.transform.rotation.x >= 0.6f || light.transform.rotation.x <= -0.6)
