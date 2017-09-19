@@ -84,6 +84,16 @@ public class Cat : MonoBehaviour
         Debug.Log("S_B : " + select_behavior);
     }
 
+    private void Awake()
+    {
+        if(!PlayerPrefs.HasKey("Friendly") || !PlayerPrefs.HasKey("Hungry") || !PlayerPrefs.HasKey("Status"))
+        {
+            PlayerPrefs.SetFloat("Friendly", 50.0f);
+            PlayerPrefs.SetFloat("Hungry", 100.0f);
+            PlayerPrefs.SetFloat("Status", 0.0f);
+        }
+    }
+
     // Use this for initialization
     void Start()
     {
@@ -94,9 +104,9 @@ public class Cat : MonoBehaviour
         FriendlyTimer = Time.time;
         UserInputTime = 0.0f;
         agent = GetComponent<NavMeshAgent>();
-        friendly = 50.0f;
-        hungry = 100.0f;
-        status = 0.0f;
+        friendly = PlayerPrefs.GetFloat("Friendly");
+        hungry = PlayerPrefs.GetFloat("Hungry");
+        status = PlayerPrefs.GetFloat("Status");
         RandomBehaviorSelector();
     }
 
@@ -498,6 +508,10 @@ public class Cat : MonoBehaviour
             anim.SetBool("Wash", false);
             RandomBehaviorSelector();
         }
+        // 저장
+        PlayerPrefs.SetFloat("Friendly", friendly);
+        PlayerPrefs.SetFloat("Hungry", hungry);
+        PlayerPrefs.SetFloat("Status", status);
     }
 
     private void OnTriggerEnter(Collider other)

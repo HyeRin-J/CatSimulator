@@ -18,12 +18,9 @@ public class Event : MonoBehaviour
     int rand;
     GameObject emo;
     new AudioSource audio;
-<<<<<<< HEAD
-=======
     private bool actionTrigger = false;
     public Slider FriendlySlier, HungerSlider, StatusSlider;
 
->>>>>>> be458df26ff1c83a90dd18995d3984c94a9d932b
     /*
 	public void GestureInProgress(uint userId, int userIndex, KinectGestures.Gestures gesture, 
 		float progress, KinectWrapper.NuiSkeletonPositionIndex joint, Vector3 screenPos)
@@ -44,25 +41,10 @@ public class Event : MonoBehaviour
 		return true;
 	}
     */
-<<<<<<< HEAD
-    int RandomValue()
-=======
     // Use this for initialization
     void Start()
->>>>>>> be458df26ff1c83a90dd18995d3984c94a9d932b
     {
 
-<<<<<<< HEAD
-        return RandValue;
-    }
-    
-    // Use this for initialization
-	void Start () {
-        //Pattern = GameObject.FindGameObjectWithTag("Pattern");
-        //털 패턴 적용, Title 화면부터 동작하지 않으면 오류 나기때문에 일단 비활성화.
-        //patternnum = Pattern.GetComponent<Pattern>().patternnum;
-        GameObject.Find("cardboardBox_02").SetActive(false);
-=======
         /*TcpClient client = new TcpClient();
       try{
          //client.Connect("172.19.89.16",9999);
@@ -82,7 +64,6 @@ public class Event : MonoBehaviour
         //Pattern = GameObject.FindGameObjectWithTag("Pattern");
         //털 패턴 적용, Title 화면부터 동작하지 않으면 오류 나기때문에 일단 비활성화.
         //patternnum = Pattern.GetComponent<Pattern>().patternnum;
->>>>>>> be458df26ff1c83a90dd18995d3984c94a9d932b
         GameObject.Find("cu_cat2_mesh").GetComponent<Renderer>().material.mainTexture = Resources.Load("cu_cat2_" + patternnum) as Texture2D;
         catScript = Cat.GetComponent<Cat>();
         anim = Cat.GetComponent<Animator>();
@@ -94,10 +75,6 @@ public class Event : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-<<<<<<< HEAD
-        //friendlyslider.value = catScript.friendly;
-        //statusslider.value = catScript.status;
-=======
         FriendlySlier.value = catScript.friendly / 100;
         StatusSlider.value = catScript.status / 100;
         HungerSlider.value = catScript.hungry / 100;
@@ -105,6 +82,13 @@ public class Event : MonoBehaviour
         if (Input.GetKey(KeyCode.Space))
         {
             SceneManager.LoadScene("Main");
+            PlayerPrefs.DeleteKey("Friendly");
+            PlayerPrefs.SetFloat("Friendly", 50.0f);
+            PlayerPrefs.SetFloat("Hungry", 100.0f);
+            PlayerPrefs.SetFloat("Status", 0.0f);
+            catScript.friendly = PlayerPrefs.GetFloat("Friendly");
+            catScript.hungry = PlayerPrefs.GetFloat("Hungry");
+            catScript.status = PlayerPrefs.GetFloat("Status");
         }
 
         if (Input.GetKey(KeyCode.CapsLock))
@@ -132,7 +116,6 @@ public class Event : MonoBehaviour
             catScript.agent.SetDestination(Laserpoint.transform.position);
         }
 
->>>>>>> be458df26ff1c83a90dd18995d3984c94a9d932b
         /*
 		KinectManager kinectManager = KinectManager.Instance;
 		if ((!kinectManager || !kinectManager.IsInitialized () || !kinectManager.IsUserDetected ())) {
