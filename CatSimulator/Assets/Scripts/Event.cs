@@ -20,7 +20,8 @@ public class Event : MonoBehaviour
     new AudioSource audio;
     private bool actionTrigger = false;
     public Slider FriendlySlier, HungerSlider, StatusSlider;
-
+    GameObject[] Button;
+    GameObject inputButton, actionButton;
     /*
 	public void GestureInProgress(uint userId, int userIndex, KinectGestures.Gestures gesture, 
 		float progress, KinectWrapper.NuiSkeletonPositionIndex joint, Vector3 screenPos)
@@ -70,13 +71,23 @@ public class Event : MonoBehaviour
         emo = GameObject.Find("Emoticon");
         emo.SetActive(false);
         audio = GameObject.Find("cu_cat2_model").GetComponent<AudioSource>();
+        Button = GameObject.FindGameObjectsWithTag("UserButton");
+        for (int i = 0; i < Button.Length; i++)
+        {
+            Button tempButton = Button[i].GetComponent<Button>();
+            tempButton.onClick.AddListener(() => CatResponse(int.Parse(tempButton.name)));
+        }
+        inputButton = GameObject.Find("InputButton");
+        actionButton = GameObject.Find("ActionButton");
+        inputButton.GetComponent<Button>().onClick.AddListener(() => SetUserInput(true));
+        actionButton.GetComponent<Button>().onClick.AddListener(() => SetActionTrigger());
     }
 
     // Update is called once per frame
     void Update()
     {
         FriendlySlier.value = catScript.friendly / 100;
-        StatusSlider.value = catScript.status / 100;
+        StatusSlider.value = catScript.tired / 100;
         HungerSlider.value = catScript.hungry / 100;
 
         if (Input.GetKey(KeyCode.Space))
@@ -88,7 +99,34 @@ public class Event : MonoBehaviour
             PlayerPrefs.SetFloat("Status", 0.0f);
             catScript.friendly = PlayerPrefs.GetFloat("Friendly");
             catScript.hungry = PlayerPrefs.GetFloat("Hungry");
-            catScript.status = PlayerPrefs.GetFloat("Status");
+            catScript.tired = PlayerPrefs.GetFloat("Status");
+        }
+
+        if (Input.GetKey(KeyCode.F12))
+        {
+            for (int i = 0; i < Button.Length; i++)
+            {
+                if (Button[i].activeSelf)
+                {
+                    Button[i].SetActive(false);
+                }
+                else
+                {
+                    Button[i].SetActive(true);
+                }
+            }
+
+            if (inputButton.activeSelf && actionButton.activeSelf)
+            {
+                inputButton.SetActive(false);
+                actionButton.SetActive(false);
+
+            }
+            else
+            {
+                inputButton.SetActive(true);
+                actionButton.SetActive(true);
+            }
         }
 
         if (Input.GetKey(KeyCode.CapsLock))
@@ -102,6 +140,7 @@ public class Event : MonoBehaviour
                 Laserpoint.GetComponent<LineRenderer>().enabled = false;
             }
         }
+
         if (Laserpoint.GetComponent<LineRenderer>().enabled)
         {
             Ray cameraRay = Camera.main.ScreenPointToRay(Input.mousePosition);
@@ -150,6 +189,11 @@ public class Event : MonoBehaviour
         }
     }
 
+    public void SetActionTrigger()
+    {
+        actionTrigger = true;
+    }
+
     public void SetUserInput(bool t)
     {
         anim.SetBool("UserInput", t);
@@ -163,27 +207,42 @@ public class Event : MonoBehaviour
             actionTrigger = false;
             result = catFriendly();
             emo.SetActive(true);
+            anim.SetBool("B_idle", false);
+            anim.SetBool("Hungry", false);
             //쓰다듬기
             if (b == 1)
             {
                 switch (result)
                 {
                     case 0:
-                        anim.SetTrigger("Nag1");
+                        anim.SetTrigger("Nagative");
+                        catScript.friendly -= 4.0f;
                         emo.GetComponent<MeshRenderer>().material.mainTexture = Resources.Load("angry") as Texture2D;
-                        audio.clip = Resources.Load("Sounds/Angry_Cat") as AudioClip;
+                        audio.clip = Resources.Load("Sounds/Cat-hissing-sound") as AudioClip;
                         audio.Play();
                         break;
                     case 1:
-                        anim.SetBool("Pos1", true);
+                        anim.SetBool("Run", true);
+                        catScript.friendly -= 3.0f;
+                        emo.GetComponent<MeshRenderer>().material.mainTexture = Resources.Load("hate") as Texture2D;
+                        catScript.agent.SetDestination(new Vector3(4.57f, 0.0f, -1.6f));
+                        audio.clip = Resources.Load("Sounds/Angry-cat") as AudioClip;
+                        audio.Play();
+                        break;
+                    case 2:
+                        anim.SetBool("Positive", true);
+                        catScript.friendly += 2.0f;
                         emo.GetComponent<MeshRenderer>().material.mainTexture = Resources.Load("happy") as Texture2D;
                         audio.clip = Resources.Load("Sounds/Cat-meow-sound-2") as AudioClip;
                         audio.Play();
                         break;
-                    case 2:
-                        anim.SetBool("Pos2", true);
+                    case 3:
+                        anim.SetTrigger("EarStart");
+                        anim.SetBool("EarDown", true);
+                        anim.SetBool("EarUp", true);
+                        catScript.friendly += 3.0f;
                         emo.GetComponent<MeshRenderer>().material.mainTexture = Resources.Load("love") as Texture2D;
-                        audio.clip = Resources.Load("Sounds/Cat-meow-sound-2") as AudioClip;
+                        audio.clip = Resources.Load("Sounds/Meow-sound-3") as AudioClip;
                         break;
                 }
             }
@@ -193,21 +252,29 @@ public class Event : MonoBehaviour
                 switch (result)
                 {
                     case 0:
-                        anim.SetTrigger("Nag1");
+                        anim.SetTrigger("Nagative");
+                        catScript.friendly -= 4.0f;
                         emo.GetComponent<MeshRenderer>().material.mainTexture = Resources.Load("angry") as Texture2D;
-                        audio.clip = Resources.Load("Sounds/Angry_Cat") as AudioClip;
+                        audio.clip = Resources.Load("Sounds/Cat-hissing-sound") as AudioClip;
                         audio.Play();
                         break;
                     case 1:
-                        anim.SetBool("Pos1", true);
+                        anim.SetBool("UserInput", false);
+                        anim.SetBool("B_idle", false);
+                        emo.GetComponent<MeshRenderer>().material.mainTexture = Resources.Load("embarrass") as Texture2D;
+                        break;
+                    case 2:
+                        anim.SetBool("Positive", true);
+                        catScript.friendly += 2.0f;
                         emo.GetComponent<MeshRenderer>().material.mainTexture = Resources.Load("happy") as Texture2D;
                         audio.clip = Resources.Load("Sounds/Cat-meow-sound-2") as AudioClip;
                         audio.Play();
                         break;
-                    case 2:
-                        anim.SetBool("Pos2", true);
+                    case 3:
+                        anim.SetTrigger("Charm");
+                        catScript.friendly += 3.0f;
                         emo.GetComponent<MeshRenderer>().material.mainTexture = Resources.Load("love") as Texture2D;
-                        audio.clip = Resources.Load("Sounds/Cat-meow-sound-2") as AudioClip;
+                        audio.clip = Resources.Load("Sounds/Meow-sound-3") as AudioClip;
 
                         break;
                 }
@@ -218,71 +285,233 @@ public class Event : MonoBehaviour
                 switch (result)
                 {
                     case 0:
-                        anim.SetTrigger("Nag1");
-                        emo.GetComponent<MeshRenderer>().material.mainTexture = Resources.Load("sad") as Texture;
-                        audio.clip = Resources.Load("Sounds/Cat-noises") as AudioClip;
+                        anim.SetTrigger("Nagative");
+                        catScript.friendly -= 2.0f;
+                        emo.GetComponent<MeshRenderer>().material.mainTexture = Resources.Load("angry") as Texture;
+                        audio.clip = Resources.Load("Sounds/Cat-hissing-sound") as AudioClip;
                         audio.Play();
                         break;
                     case 1:
+                        anim.SetTrigger("Nagative");
+                        catScript.friendly -= 3.0f;
+                        emo.GetComponent<MeshRenderer>().material.mainTexture = Resources.Load("sad") as Texture;
+                        audio.clip = Resources.Load("Sounds/Sad-cat") as AudioClip;
+                        audio.Play();
                         break;
                     case 2:
+                        anim.SetBool("Positive", true);
+                        catScript.friendly += 2.0f;
+                        emo.GetComponent<MeshRenderer>().material.mainTexture = Resources.Load("happy") as Texture2D;
+                        audio.clip = Resources.Load("Sounds/Cat-meow-sound-2") as AudioClip;
+                        audio.Play();
                         break;
                     case 3:
+                        anim.SetBool("walk", true);
+                        emo.GetComponent<MeshRenderer>().material.mainTexture = Resources.Load("surprise") as Texture2D;
+                        catScript.agent.SetDestination(Camera.main.transform.position);
+                        audio.clip = Resources.Load("Sounds/Cat-meowing-sound") as AudioClip;
+                        audio.Play();
                         break;
                 }
             }
+            // 밥주기
+            else if (b == 4)
+            {
+                if (catScript.hungry <= 80)
+                {
+                    anim.SetTrigger("Eat");
+                    catScript.hungry += 50.0f;
+                    emo.GetComponent<MeshRenderer>().material.mainTexture = Resources.Load("yammy") as Texture;
+                }
+                else
+                {
+                    anim.SetBool("UserInput", false);
+                    emo.GetComponent<MeshRenderer>().material.mainTexture = Resources.Load("embarrass") as Texture2D;
+                }
+            }
             actionTrigger = true;
-        }
-        // 밥주기
-        else if (b == 4)
-        {
-
+            SetUserInput(false);
         }
     }
-    // 0이 부정적 반응, 1~2은 긍정적 반응, 숫자 클 수록 반응 정도가 달라짐
+    // 0 : 공용 부정, 1 : 전용 부정, 2 : 공용 긍정, 3 : 전용 긍정
+    // 친밀도가 높아도 피로도가 낮으면 긍정 반응을 보기가 힘듬
     int catFriendly()
     {
         rand = Random.Range(0, 101);
 
-        if (catScript.friendly <= 35)
+        if (catScript.tired <= 50)
         {
-            if (rand <= catScript.friendly)
+            if (catScript.friendly <= 20)
             {
-                return 1;
+                if (rand <= catScript.friendly)
+                {
+                    int posRand = Random.Range(0, 2);
+                    if (posRand == 0)
+                    {
+                        return 2;
+                    }
+                    else
+                    {
+                        return 3;
+                    }
+                }
+                else
+                {
+                    int nagRand = Random.Range(0, 2);
+                    if (nagRand == 0)
+                    {
+                        return 0;
+                    }
+                    else
+                    {
+                        return 1;
+                    }
+                }
+            }
+            else if (catScript.friendly <= 50)
+            {
+                if (rand <= 20)
+                {
+                    return 2;
+                }
+                else if (rand <= catScript.friendly)
+                {
+                    return 3;
+                }
+                else
+                {
+                    int nagRand = Random.Range(0, 2);
+                    if (nagRand == 0)
+                    {
+                        return 0;
+                    }
+                    else
+                    {
+                        return 1;
+                    }
+                }
+            }
+            else if (catScript.friendly <= 80)
+            {
+                if (rand <= 40)
+                {
+                    return 2;
+                }
+                else if (rand <= catScript.friendly)
+                {
+                    return 3;
+                }
+                else
+                {
+                    int nagRand = Random.Range(0, 2);
+                    if (nagRand == 0)
+                    {
+                        return 0;
+                    }
+                    else
+                    {
+                        return 1;
+                    }
+                }
             }
             else
             {
-                return 0;
-            }
-        }
-        if (catScript.friendly > 35 && catScript.friendly <= 70)
-        {
-            if (rand <= 35)
-            {
-                return 1;
-            }
-            else if (rand <= catScript.friendly)
-            {
-                return 2;
-            }
-            else
-            {
-                return 0;
+                if (rand <= 40)
+                {
+                    return 2;
+                }
+                else if (rand <= 80)
+                {
+                    return 3;
+                }
+                else
+                {
+                    int nagRand = Random.Range(0, 2);
+                    if (nagRand == 0)
+                    {
+                        return 0;
+                    }
+                    else
+                    {
+                        return 1;
+                    }
+                }
             }
         }
         else
         {
-            if (rand <= 35)
+            if (catScript.friendly <= 50)
             {
-                return 1;
+                if (rand <= 30)
+                {
+                    int posRand = Random.Range(0, 2);
+                    if (posRand == 0)
+                    {
+                        return 2;
+                    }
+                    else
+                    {
+                        return 3;
+                    }
+                }
+                else
+                {
+                    int nagRand = Random.Range(0, 2);
+                    if (nagRand == 0)
+                    {
+                        return 0;
+                    }
+                    else
+                    {
+                        return 1;
+                    }
+                }
             }
-            else if (rand <= 70)
+            else if (catScript.friendly <= 80)
             {
-                return 2;
+                if (rand <= 20)
+                {
+                    return 2;
+                }
+                else if (rand <= 40)
+                {
+                    return 3;
+                }
+                else
+                {
+                    int nagRand = Random.Range(0, 2);
+                    if (nagRand == 0)
+                    {
+                        return 0;
+                    }
+                    else
+                    {
+                        return 1;
+                    }
+                }
             }
             else
             {
-                return 0;
+                if (rand <= 30)
+                {
+                    return 2;
+                }
+                else if (rand <= 50)
+                {
+                    return 3;
+                }
+                else
+                {
+                    int nagRand = Random.Range(0, 2);
+                    if (nagRand == 0)
+                    {
+                        return 0;
+                    }
+                    else
+                    {
+                        return 1;
+                    }
+                }
             }
         }
     }

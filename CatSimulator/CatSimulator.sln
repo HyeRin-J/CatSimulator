@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2017
+# Visual Studio 2015
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CatSimulator", "CatSimulator.csproj", "{A3FAF2C6-F288-0244-20B6-DCB7E74BF04A}"
 EndProject
 Global

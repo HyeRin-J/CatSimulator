@@ -3,16 +3,16 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
-public enum CatState {sleep, idle, wash, walk, run, play, pole}
+public enum CatState { sleep, idle, wash, walk, run, play, pole }
 
 public class Cat : MonoBehaviour
 {
-    public float status = 0.0f;
+    public float tired = 0.0f;
     public float hungry = 100.0f;
     public float happiness = 0.0f;
     public float friendly = 50.0f;
     public Animator anim;
-    float FriendlyTimer, CurrentTime, AnimationTime, UserInputTime, PlayTime;
+    float FriendlyTimer, CurrentTime, AnimationTime, UserInputTime, PlayTime, ResponseTime;
     public NavMeshAgent agent;
     public GameObject emo;
     public bool jump;
@@ -27,16 +27,16 @@ public class Cat : MonoBehaviour
     private bool onTriggerYarn = false, onTriggerScratter = false;
     GameObject YarnBall, Scratter;
 
-    //행동 결정
+    //행동 결정, 조정 필요
     void RandomBehaviorSelector()
     {
-        happiness = friendly * 0.2f + hungry * 0.3f + Random.Range(0, 100) * 0.1f - status * 0.4f;
+        happiness = friendly * 0.2f + hungry * 0.3f + Random.Range(0, 100) * 0.1f - tired * 0.4f;
 
-        if (status >= 100.0f)
+        if (tired >= 100.0f)
         {
             select_behavior = 0;
         }
-        else if (status >= 60.0f)
+        else if (tired >= 60.0f)
         {
             if (happiness >= 60.0f)
             {
@@ -51,7 +51,7 @@ public class Cat : MonoBehaviour
                 select_behavior = Random.Range(0, 3);
             }
         }
-        else if (status >= 30.0f)
+        else if (tired >= 30.0f)
         {
             if (happiness >= 50.0f)
             {
@@ -67,7 +67,7 @@ public class Cat : MonoBehaviour
             }
         }
         else
-        {   //status < 30.0f
+        {   //tired < 30.0f
             if (happiness >= 30.0f)
             {
                 select_behavior = Random.Range(0, 7);
@@ -86,11 +86,11 @@ public class Cat : MonoBehaviour
 
     private void Awake()
     {
-        if(!PlayerPrefs.HasKey("Friendly") || !PlayerPrefs.HasKey("Hungry") || !PlayerPrefs.HasKey("Status"))
+        if (!PlayerPrefs.HasKey("Friendly") || !PlayerPrefs.HasKey("Hungry") || !PlayerPrefs.HasKey("Tired"))
         {
             PlayerPrefs.SetFloat("Friendly", 50.0f);
             PlayerPrefs.SetFloat("Hungry", 100.0f);
-            PlayerPrefs.SetFloat("Status", 0.0f);
+            PlayerPrefs.SetFloat("Tired", 0.0f);
         }
     }
 
@@ -100,13 +100,13 @@ public class Cat : MonoBehaviour
         anim = GetComponent<Animator>();
         YarnBall = GameObject.FindGameObjectWithTag("YarnBall");
         Scratter = GameObject.Find("cu_cat2_pole_mesh");
-        FriendlyTimer = CurrentTime = AnimationTime = UserInputTime = PlayTime = 0.0f;
+        FriendlyTimer = CurrentTime = AnimationTime = UserInputTime = PlayTime = ResponseTime = 0.0f;
         FriendlyTimer = Time.time;
         UserInputTime = 0.0f;
         agent = GetComponent<NavMeshAgent>();
         friendly = PlayerPrefs.GetFloat("Friendly");
         hungry = PlayerPrefs.GetFloat("Hungry");
-        status = PlayerPrefs.GetFloat("Status");
+        tired = PlayerPrefs.GetFloat("Tired");
         RandomBehaviorSelector();
     }
 
@@ -114,40 +114,11 @@ public class Cat : MonoBehaviour
     void Update()
     {
         CurrentTime = Time.time;
-        
+
         AnimatorStateInfo info = anim.GetCurrentAnimatorStateInfo(0);   //현재 애니메이션 상태
         AnimatorTransitionInfo info2 = anim.GetAnimatorTransitionInfo(0);   //현재 트랜지션 상태
-        //anim.runtimeAnimatorController = Resources.Load("") as RuntimeAnimatorController; //애니메이터 변경
+                                                                            //anim.runtimeAnimatorController = Resources.Load("") as RuntimeAnimatorController; //애니메이터 변경
 
-        KinectManager kinectManager = KinectManager.Instance;
-        bool ready = Server.readyToUser;
-        //유저입력대기
-        if (anim.GetBool("UserInput"))
-        {
-            agent.SetDestination(new Vector3(1.0f, 1.17f, -0.2f));
-            if (Vector3.Distance(new Vector3(1.0f, 1.17f, -0.2f), transform.position) <= 0.3f)
-            {
-                agent.isStopped = true;
-                anim.SetBool("B_idle", true);
-                GameObject.Find("Sofa").GetComponent<OffMeshLink>().activated = false;
-            }
-            else if (Vector3.Distance(new Vector3(1.0f, 1.17f, -0.2f), transform.position) > 0.3f)
-            {
-                anim.SetBool("Run", true);
-            }
-            if (CurrentTime - UserInputTime >= 60.0f && !kinectManager.IsUserDetected())
-            {
-                anim.SetBool("UserInput", false);
-                anim.SetBool("B_idle", false);
-                RandomBehaviorSelector();
-                UserInputTime = 0.0f;
-                GameObject.Find("Sofa").GetComponent<OffMeshLink>().activated = true;
-            }
-        }
-        else
-        {
-            GameObject.Find("Sofa").GetComponent<OffMeshLink>().activated = true;
-        }
         //점프
         if (agent.isOnOffMeshLink)
         {
@@ -248,11 +219,11 @@ public class Cat : MonoBehaviour
             {
                 friendly += 1.0f;
             }
-            if (status <= 98.0f)
+            if (tired <= 98.0f)
             {
-                status += 2.0f;
+                tired += 2.0f;
             }
-            if (hungry <= 0.1)
+            if (hungry <= 5.0f)
             {
                 if (friendly >= 3.0f)
                     friendly -= 3.0f;
@@ -260,162 +231,137 @@ public class Cat : MonoBehaviour
             FriendlyTimer = Time.time;
         }
 
-        if ((info.IsName("A_walk") || info.IsName("A_run")) && agent.remainingDistance <= 0.1f)
+        KinectManager kinectManager = KinectManager.Instance;
+        bool ready = Server.readyToUser;
+        //유저입력대기
+        if (anim.GetBool("UserInput"))
         {
-            if (!agent.pathPending)
+            agent.SetDestination(new Vector3(1.0f, 1.17f, -0.2f));
+            if (Vector3.Distance(new Vector3(1.0f, 1.17f, -0.2f), transform.position) <= 0.3f)
             {
-                RandomBehaviorSelector();
-                agent.SetDestination(new Vector3(Random.Range(-600, 700) * 0.01f, Random.Range(0, 200) * 0.01f, Random.Range(-200, 500) * 0.01f));
-            }
-        }
-        if (select_behavior == (int)CatState.sleep)
-        {
-            YarnBall.GetComponent<NavMeshObstacle>().enabled = true;
-            Scratter.GetComponent<NavMeshObstacle>().enabled = true;
-            if (!agent.pathPending)
-            {
-                anim.SetBool("Sleep", true);
+                agent.isStopped = true;
+                transform.LookAt(new Vector3(GameObject.Find("Main Camera").transform.position.x, GameObject.Find("Main Camera").transform.position.y - 2.0f, GameObject.Find("Main Camera").transform.position.z));
                 anim.SetBool("Run", false);
                 anim.SetBool("Walk", false);
-                anim.SetBool("Play", false);
-            }
-            if (CurrentTime - AnimationTime > 10.0f)
-            {
                 anim.SetBool("Sleep", false);
-                RandomBehaviorSelector();
-            }
-        }
-        else if (select_behavior == (int)CatState.idle)
-        {
-            YarnBall.GetComponent<NavMeshObstacle>().enabled = true;
-            Scratter.GetComponent<NavMeshObstacle>().enabled = true;
-            if (!agent.pathPending)
-            {
-                anim.SetBool("Run", false);
-                anim.SetBool("Walk", false);
                 anim.SetBool("Play", false);
-                anim.SetBool("Sleep", false);
-            }
-            if (CurrentTime - AnimationTime > 5.0f)
-            {
-                RandomBehaviorSelector();
-                agent.SetDestination(new Vector3(Random.Range(-600, 700) * 0.01f, 0, Random.Range(-200, 500) * 0.01f));
-
-                anim.SetBool("Run", false);
-                anim.SetBool("Walk", false);
-                anim.SetBool("Play", false);
-                anim.SetBool("Sleep", false);
-            }
-        }
-        else if(select_behavior == (int)CatState.wash)
-        {
-            YarnBall.GetComponent<NavMeshObstacle>().enabled = true;
-            Scratter.GetComponent<NavMeshObstacle>().enabled = true;
-            agent.velocity = new Vector3(0, 0, 0);
-            agent.speed = 0;
-            agent.isStopped = true;
-            anim.SetBool("Run", false);
-            anim.SetBool("Walk", false);
-            anim.SetBool("Play", false);
-            anim.SetBool("Sleep", false);
-            anim.SetBool("Wash", true);
-        }
-        else if (select_behavior == (int)CatState.walk)
-        {
-            YarnBall.GetComponent<NavMeshObstacle>().enabled = true;
-            Scratter.GetComponent<NavMeshObstacle>().enabled = true;
-            
-            if (!agent.pathPending)
-            {
-                if (agent.remainingDistance <= 0.1f)
+                anim.SetBool("Wash", false);
+                if (hungry <= 10 && !info.IsName("D_chodai"))
                 {
-                    RandomBehaviorSelector();
-                    agent.SetDestination(new Vector3(Random.Range(-600, 700) * 0.01f, 0, Random.Range(-200, 500) * 0.01f));
+                    anim.SetBool("B_idle", false);
+                    anim.SetBool("Hungry", true);
+                    anim.SetTrigger("Chodai");
                 }
-                agent.speed = 1;
-                anim.SetBool("Run", false);
-                anim.SetBool("Walk", true);
-                anim.SetBool("Play", false);
-                anim.SetBool("Sleep", false);
-            }
-        }
-        else if (select_behavior == (int)CatState.run)
-        {
-            YarnBall.GetComponent<NavMeshObstacle>().enabled = true;
-            Scratter.GetComponent<NavMeshObstacle>().enabled = true;
-            if (!agent.pathPending)
-            {
-                if (agent.remainingDistance <= 0.1f)
+                else if (hungry > 10 && !info.IsName("B_idle"))
                 {
-                    RandomBehaviorSelector();
-                    agent.SetDestination(new Vector3(Random.Range(-600, 700) * 0.01f, 0, Random.Range(-200, 500) * 0.01f));
+                    anim.SetTrigger("B_idle");
+                    anim.SetBool("Hungry", false);
                 }
-                agent.speed = 2;
+                GameObject.Find("Sofa").GetComponent<OffMeshLink>().activated = false;
+            }
+            else if (Vector3.Distance(new Vector3(1.0f, 1.17f, -0.2f), transform.position) > 0.3f)
+            {
                 anim.SetBool("Run", true);
+            }
+            if (CurrentTime - UserInputTime >= 60.0f && UserInputTime != 0.0f) //&& !kinectManager.IsUserDetected()
+            {
+                anim.SetBool("UserInput", false);
+                anim.SetBool("B_idle", false);
+                anim.SetBool("Hungry", false);
+
+                RandomBehaviorSelector();
+                UserInputTime = 0.0f;
+                GameObject.Find("Sofa").GetComponent<OffMeshLink>().activated = true;
+            }
+            if (tired >= 90.0f && CurrentTime - UserInputTime >= 80.0f && UserInputTime != 0.0f)
+            {
+                friendly -= 0.05f;
+            }
+        }
+        else
+        {
+            if (select_behavior == (int)CatState.sleep)
+            {
+                YarnBall.GetComponent<NavMeshObstacle>().enabled = true;
+                Scratter.GetComponent<NavMeshObstacle>().enabled = true;
+                if (!agent.pathPending)
+                {
+                    anim.SetBool("Sleep", true);
+                    anim.SetBool("Run", false);
+                    anim.SetBool("Walk", false);
+                    anim.SetBool("Play", false);
+                }
+                if (CurrentTime - AnimationTime > 10.0f)
+                {
+                    anim.SetBool("Sleep", false);
+                    RandomBehaviorSelector();
+                }
+            }
+            else if (select_behavior == (int)CatState.idle)
+            {
+                YarnBall.GetComponent<NavMeshObstacle>().enabled = true;
+                Scratter.GetComponent<NavMeshObstacle>().enabled = true;
+                if (!agent.pathPending)
+                {
+                    anim.SetBool("Run", false);
+                    anim.SetBool("Walk", false);
+                    anim.SetBool("Play", false);
+                    anim.SetBool("Sleep", false);
+                }
+                if (CurrentTime - AnimationTime > 5.0f)
+                {
+                    RandomBehaviorSelector();
+                    agent.SetDestination(new Vector3(Random.Range(-600, 700) * 0.01f, 0, Random.Range(-200, 500) * 0.01f));
+
+                    anim.SetBool("Run", false);
+                    anim.SetBool("Walk", false);
+                    anim.SetBool("Play", false);
+                    anim.SetBool("Sleep", false);
+                }
+            }
+            else if (select_behavior == (int)CatState.wash)
+            {
+                YarnBall.GetComponent<NavMeshObstacle>().enabled = true;
+                Scratter.GetComponent<NavMeshObstacle>().enabled = true;
+                agent.velocity = new Vector3(0, 0, 0);
+                agent.speed = 0;
+                agent.isStopped = true;
+                anim.SetBool("Run", false);
                 anim.SetBool("Walk", false);
                 anim.SetBool("Play", false);
                 anim.SetBool("Sleep", false);
+                anim.SetBool("Wash", true);
             }
-        }
-        else if(select_behavior == (int)CatState.play)
-        {
-            
-            agent.SetDestination(YarnBall.transform.position);
-            YarnBall.GetComponent<NavMeshObstacle>().enabled = false;            
-            if (onTriggerYarn)
+            else if (select_behavior == (int)CatState.walk)
             {
-                anim.SetBool("Run", false);
-                agent.velocity = new Vector3(0, 0, 0);
-                agent.speed = 0;
-                agent.isStopped = true;
-                anim.SetBool("Play", true);
-            }
-            else
-            {
-                if (!agent.pathPending)
-                {
-                    agent.speed = 2;
-                    anim.SetBool("Run", true);
-                    anim.SetBool("Walk", false);
-                    anim.SetBool("Play", false);
-                    anim.SetBool("Sleep", false);
-                }
-            }
-            if (info.IsName("A_punch_R") && info.normalizedTime >= 0.4)
-            {
-                YarnBall.transform.Translate(transform.right * -0.5f * Time.deltaTime);
-                YarnBall.transform.Rotate(transform.right * -100.0f * Time.deltaTime);
-            }
-            if (CurrentTime - PlayTime >= 3.0f && PlayTime != 0.0f)
-            {                
-                anim.SetBool("Play", false);
-                RandomBehaviorSelector();
-                agent.SetDestination(new Vector3(Random.Range(-600, 700) * 0.01f, 0, Random.Range(-200, 500) * 0.01f));
                 YarnBall.GetComponent<NavMeshObstacle>().enabled = true;
-                PlayTime = 0.0f;
-                onTriggerYarn = false;
-            }
-        }
-        else //if(select_behavior == (int)CatState.pole)
-        {
-            agent.SetDestination(Scratter.transform.position);
-            Scratter.GetComponent<NavMeshObstacle>().enabled = false;
+                Scratter.GetComponent<NavMeshObstacle>().enabled = true;
 
-            if (onTriggerScratter)
-            {
-                anim.SetBool("Run", false);
-                agent.velocity = new Vector3(0, 0, 0);
-                agent.speed = 0;
-                agent.isStopped = true;
-                anim.SetBool("Polling", true);
-                Vector3 vec = (Scratter.transform.position - transform.position).normalized;
-                Quaternion toQuaternion = Quaternion.LookRotation(vec);
-                transform.rotation = Quaternion.Slerp(transform.rotation, toQuaternion, 3.0f * Time.deltaTime);
-            }
-            else
-            {
                 if (!agent.pathPending)
                 {
+                    if (agent.remainingDistance <= 0.1f)
+                    {
+                        RandomBehaviorSelector();
+                        agent.SetDestination(new Vector3(Random.Range(-600, 700) * 0.01f, 0, Random.Range(-200, 500) * 0.01f));
+                    }
+                    agent.speed = 1;
+                    anim.SetBool("Run", false);
+                    anim.SetBool("Walk", true);
+                    anim.SetBool("Play", false);
+                    anim.SetBool("Sleep", false);
+                }
+            }
+            else if (select_behavior == (int)CatState.run)
+            {
+                YarnBall.GetComponent<NavMeshObstacle>().enabled = true;
+                Scratter.GetComponent<NavMeshObstacle>().enabled = true;
+                if (!agent.pathPending)
+                {
+                    if (agent.remainingDistance <= 0.1f)
+                    {
+                        RandomBehaviorSelector();
+                        agent.SetDestination(new Vector3(Random.Range(-600, 700) * 0.01f, 0, Random.Range(-200, 500) * 0.01f));
+                    }
                     agent.speed = 2;
                     anim.SetBool("Run", true);
                     anim.SetBool("Walk", false);
@@ -423,21 +369,106 @@ public class Cat : MonoBehaviour
                     anim.SetBool("Sleep", false);
                 }
             }
-            if (CurrentTime - PlayTime >= 10.0f && PlayTime != 0.0f)
+            else if (select_behavior == (int)CatState.play)
             {
-                anim.SetBool("Polling", false);
-                RandomBehaviorSelector();
-                agent.SetDestination(new Vector3(Random.Range(-600, 700) * 0.01f, 0, Random.Range(-200, 500) * 0.01f));
-                Scratter.GetComponent<NavMeshObstacle>().enabled = true;
-                PlayTime = 0.0f;
-                onTriggerScratter = false;
+
+                agent.SetDestination(YarnBall.transform.position);
+                YarnBall.GetComponent<NavMeshObstacle>().enabled = false;
+                if (onTriggerYarn)
+                {
+                    anim.SetBool("Run", false);
+                    agent.velocity = new Vector3(0, 0, 0);
+                    agent.speed = 0;
+                    agent.isStopped = true;
+                    anim.SetBool("Play", true);
+                }
+                else
+                {
+                    if (!agent.pathPending)
+                    {
+                        agent.speed = 2;
+                        anim.SetBool("Run", true);
+                        anim.SetBool("Walk", false);
+                        anim.SetBool("Play", false);
+                        anim.SetBool("Sleep", false);
+                    }
+                }
+                if (info.IsName("A_punch_R") && info.normalizedTime >= 0.4)
+                {
+                    YarnBall.transform.Translate(transform.right * -0.5f * Time.deltaTime);
+                    YarnBall.transform.Rotate(transform.right * -200.0f * Time.deltaTime);
+                }
+                if (CurrentTime - PlayTime >= 2.5f && PlayTime != 0.0f)
+                {
+                    anim.SetBool("Play", false);
+                    RandomBehaviorSelector();
+                    agent.SetDestination(new Vector3(Random.Range(-600, 700) * 0.01f, 0, Random.Range(-200, 500) * 0.01f));
+                    YarnBall.GetComponent<NavMeshObstacle>().enabled = true;
+                    PlayTime = 0.0f;
+                    onTriggerYarn = false;
+                }
+            }
+            else //if(select_behavior == (int)CatState.pole)
+            {
+                agent.SetDestination(Scratter.transform.position);
+                Scratter.GetComponent<NavMeshObstacle>().enabled = false;
+
+                if (onTriggerScratter)
+                {
+                    anim.SetBool("Run", false);
+                    agent.velocity = new Vector3(0, 0, 0);
+                    agent.speed = 0;
+                    agent.isStopped = true;
+                    anim.SetBool("Polling", true);
+                    Vector3 vec = (Scratter.transform.position - transform.position).normalized;
+                    Quaternion toQuaternion = Quaternion.LookRotation(vec);
+                    transform.rotation = Quaternion.Slerp(transform.rotation, toQuaternion, 3.0f * Time.deltaTime);
+                }
+                else
+                {
+                    if (!agent.pathPending)
+                    {
+                        agent.speed = 2;
+                        anim.SetBool("Run", true);
+                        anim.SetBool("Walk", false);
+                        anim.SetBool("Play", false);
+                        anim.SetBool("Sleep", false);
+                    }
+                }
+                if (CurrentTime - PlayTime >= 10.0f && PlayTime != 0.0f)
+                {
+                    anim.SetBool("Polling", false);
+                    RandomBehaviorSelector();
+                    agent.SetDestination(new Vector3(Random.Range(-600, 700) * 0.01f, 0, Random.Range(-200, 500) * 0.01f));
+                    PlayTime = 0.0f;
+                    onTriggerScratter = false;
+                }
+            }
+
+            if ((info.IsName("A_walk") || info.IsName("A_run")) && agent.remainingDistance <= 0.1f)
+            {
+                if (!agent.pathPending)
+                {
+                    RandomBehaviorSelector();
+                    agent.SetDestination(new Vector3(Random.Range(-600, 700) * 0.01f, Random.Range(0, 200) * 0.01f, Random.Range(-200, 500) * 0.01f));
+                }
             }
         }
 
         if (info.IsName("B_idle"))
         {
-            transform.LookAt(new Vector3(GameObject.Find("Main Camera").transform.position.x, GameObject.Find("Main Camera").transform.position.y - 2.0f, GameObject.Find("Main Camera").transform.position.z));
             agent.isStopped = true;
+        }
+
+        if (info2.IsName("A_pole_loop -> A_pole_end"))
+        {
+            Scratter.GetComponent<NavMeshObstacle>().enabled = true;
+        }
+
+        if (info2.IsName("B_idle -> BtoA") || info2.IsName("A_eat -> A_idle") || info2.IsName("parts_ear_stand -> A_idle") || info2.IsName("CtoA -> A_idle"))
+        {
+            RandomBehaviorSelector();
+            GameObject.Find("Sofa").GetComponent<OffMeshLink>().activated = true;
         }
 
         if (info2.IsName("AnyState -> B_idle"))
@@ -454,38 +485,50 @@ public class Cat : MonoBehaviour
             agent.speed = 0;
             agent.velocity = new Vector3(0, 0, 0);
             agent.isStopped = true;
-            if (info.IsName("A_idle") && status >= 0.005f)
+            if (info.IsName("A_idle") && tired >= 0.05f)
             {
-                status -= 0.005f;
+                tired -= 0.05f;
             }
-            if (info.IsName("C_sleep") && status >= 0.001f)
+            if (info.IsName("C_sleep") && tired >= 0.01f)
             {
-                status -= 0.001f;
+                tired -= 0.01f;
             }
         }
 
         if (info.IsName("A_walk") || info.IsName("A_run"))
         {
             emo.SetActive(false);
+            agent.speed = 1;
             agent.isStopped = false;
             if (jump)
                 jump = false;
-            if (info.IsName("A_walk") && status <= 99.995f)
+            if (info.IsName("A_walk") && tired <= 99.995f)
             {
-                status += 0.005f;
+                tired += 0.005f;
             }
-            if (info.IsName("A_run") && status <= 99.99f)
+            if (info.IsName("A_run") && tired <= 99.99f)
             {
-                status += 0.01f;
+                tired += 0.01f;
             }
         }
 
-        if(info.IsName("A_punch_R") || info.IsName("A_pole_loop"))
+        if (info.IsName("A_punch_R") || info.IsName("A_pole_loop"))
         {
-            if (info.IsName("A_run") && status >= 0.003f)
+            if (info.IsName("A_run") && tired >= 99.97f)
             {
-                status -= 0.003f;
+                tired += 0.03f;
             }
+        }
+        if (info.IsName("B_wash") || info.IsName("B_wash_b") || info.IsName("B_picks"))
+        {
+            if (tired >= 0.03f)
+            {
+                tired -= 0.03f;
+            }
+        }
+        if (info.IsName("A_jump_down") && transform.position.y <= 0.05f)
+        {
+            anim.SetBool("JumpDown", false);
         }
 
         if (info2.IsName("C_idle -> C_sleep") || info2.IsName("A_walk -> A_idle") || info2.IsName("A_run -> A_idle") || info2.IsName("C_idle -> A_idle"))
@@ -493,12 +536,7 @@ public class Cat : MonoBehaviour
             AnimationTime = Time.time;
         }
 
-        if (info.IsName("A_jump_down") && transform.position.y <= 0.05f)
-        {
-            anim.SetBool("JumpDown", false);
-        }
-
-        if(info2.IsName("A_idle -> A_punch_R") || info2.IsName("AnyState -> A_pole_start"))
+        if (info2.IsName("A_idle -> A_punch_R") || info2.IsName("AnyState -> A_pole_start"))
         {
             PlayTime = Time.time;
         }
@@ -508,10 +546,26 @@ public class Cat : MonoBehaviour
             anim.SetBool("Wash", false);
             RandomBehaviorSelector();
         }
+
+        if (info2.IsName("AnyState -> parts_ear_down") || info2.IsName("D_idle -> D_chodai"))
+        {
+            ResponseTime = Time.time;
+        }
+
+        if (info.IsName("parts_ear_stand") || info2.IsName("D_chodai"))
+        {
+            if (CurrentTime - ResponseTime >= 5.0f)
+            {
+                anim.SetBool("EarDown", false);
+                anim.SetBool("EarUp", false);
+                anim.SetBool("Hungry", false);
+            }
+        }
+
         // 저장
         PlayerPrefs.SetFloat("Friendly", friendly);
         PlayerPrefs.SetFloat("Hungry", hungry);
-        PlayerPrefs.SetFloat("Status", status);
+        PlayerPrefs.SetFloat("Tired", tired);
     }
 
     private void OnTriggerEnter(Collider other)
