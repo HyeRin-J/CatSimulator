@@ -395,7 +395,7 @@ public class Cat : MonoBehaviour
                 }
                 if (info.IsName("A_punch_R") && info.normalizedTime >= 0.4)
                 {
-                    YarnBall.transform.Translate(transform.right * -0.5f * Time.deltaTime);
+                    YarnBall.transform.Translate(-transform.right *  0.5f * Time.deltaTime);
                     YarnBall.transform.Rotate(transform.right * -200.0f * Time.deltaTime);
                 }
                 if (CurrentTime - PlayTime >= 2.5f && PlayTime != 0.0f)
