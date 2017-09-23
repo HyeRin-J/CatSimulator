@@ -22,6 +22,8 @@ public class Event : MonoBehaviour
     public Slider FriendlySlier, HungerSlider, StatusSlider;
     GameObject[] Button;
     GameObject inputButton, actionButton;
+    float actionTime, currentTime;
+
     /*
 	public void GestureInProgress(uint userId, int userIndex, KinectGestures.Gestures gesture, 
 		float progress, KinectWrapper.NuiSkeletonPositionIndex joint, Vector3 screenPos)
@@ -81,11 +83,13 @@ public class Event : MonoBehaviour
         actionButton = GameObject.Find("ActionButton");
         inputButton.GetComponent<Button>().onClick.AddListener(() => SetUserInput(true));
         actionButton.GetComponent<Button>().onClick.AddListener(() => SetActionTrigger());
+        actionTime = Time.time;
     }
 
     // Update is called once per frame
     void Update()
     {
+        currentTime = Time.time;
         FriendlySlier.value = catScript.friendly / 100;
         StatusSlider.value = catScript.tired / 100;
         HungerSlider.value = catScript.hungry / 100;
@@ -202,6 +206,13 @@ public class Event : MonoBehaviour
     public void CatResponse(int b)
     {
         int result = 0;
+        if (!actionTrigger)
+        {
+            if(currentTime - actionTime >= 5.0f)
+            {
+                actionTrigger = true;
+            }
+        }
         if (anim.GetBool("UserInput") && actionTrigger)
         {
             actionTrigger = false;
@@ -329,7 +340,7 @@ public class Event : MonoBehaviour
                     emo.GetComponent<MeshRenderer>().material.mainTexture = Resources.Load("embarrass") as Texture2D;
                 }
             }
-            actionTrigger = true;
+            actionTime = Time.time;
             SetUserInput(false);
         }
     }
