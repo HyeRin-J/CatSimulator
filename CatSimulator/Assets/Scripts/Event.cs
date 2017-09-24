@@ -168,9 +168,10 @@ public class Event : MonoBehaviour
 			//anim.SetBool ("UserInput", false);
 			//Debug.Log ("Kinect dead.");
 		}else{
-			SetUserInput (true);
+            if(currentTime - actionTime >= 5.0f)
+			    SetUserInput (true);
 			//Debug.Log ("Kinect is Detecting");
-			uint userId = kinectManager.GetPlayer1ID ();
+			uint userId = kinectManager.GetPlayer1ID ();s
 			kinectManager.DetectGesture(userId, KinectGestures.Gestures.RaiseRightHand);
 			kinectManager.DetectGesture(userId, KinectGestures.Gestures.RaiseLeftHand);
 			string t = Server.returnValue; // "123.456" -> 123.456 
