@@ -14,7 +14,7 @@ public class Cat : MonoBehaviour
     public Animator anim;
     float FriendlyTimer, CurrentTime, AnimationTime, UserInputTime, PlayTime, ResponseTime;
     public NavMeshAgent agent;
-    public GameObject emo;
+    public GameObject emo, food;
     public bool jump;
     private OffMeshLinkData offMeshLinkData;
     Vector3 jumpStartPos = Vector3.zero;
@@ -482,6 +482,7 @@ public class Cat : MonoBehaviour
         if (info.IsName("A_idle") || info.IsName("C_sleep"))
         {
             emo.SetActive(false);
+            food.SetActive(false);
             agent.speed = 0;
             agent.velocity = new Vector3(0, 0, 0);
             agent.isStopped = true;
@@ -498,6 +499,7 @@ public class Cat : MonoBehaviour
         if (info.IsName("A_walk") || info.IsName("A_run"))
         {
             emo.SetActive(false);
+            food.SetActive(false);
             agent.speed = 1;
             agent.isStopped = false;
             if (jump)

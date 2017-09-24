@@ -16,7 +16,7 @@ public class Event : MonoBehaviour
     Cat catScript;
     Animator anim;
     int rand;
-    GameObject emo;
+    GameObject emo, food;
     new AudioSource audio;
     private bool actionTrigger = false;
     public Slider FriendlySlier, HungerSlider, StatusSlider;
@@ -68,6 +68,7 @@ public class Event : MonoBehaviour
         //털 패턴 적용, Title 화면부터 동작하지 않으면 오류 나기때문에 일단 비활성화.
         //patternnum = Pattern.GetComponent<Pattern>().patternnum;
         GameObject.Find("cu_cat2_mesh").GetComponent<Renderer>().material.mainTexture = Resources.Load("cu_cat2_" + patternnum) as Texture2D;
+        food = GameObject.Find("prop_feed_model");
         catScript = Cat.GetComponent<Cat>();
         anim = Cat.GetComponent<Animator>();
         emo = GameObject.Find("Emoticon");
@@ -84,6 +85,7 @@ public class Event : MonoBehaviour
         inputButton.GetComponent<Button>().onClick.AddListener(() => SetUserInput(true));
         actionButton.GetComponent<Button>().onClick.AddListener(() => SetActionTrigger());
         actionTime = Time.time;
+        food.SetActive(false);
     }
 
     // Update is called once per frame
@@ -328,6 +330,7 @@ public class Event : MonoBehaviour
             // 밥주기
             else if (b == 4)
             {
+                food.SetActive(true);
                 if (catScript.hungry <= 80)
                 {
                     anim.SetTrigger("Eat");
