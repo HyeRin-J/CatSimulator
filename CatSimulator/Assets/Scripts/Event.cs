@@ -24,7 +24,7 @@ public class Event : MonoBehaviour
     GameObject inputButton, actionButton;
     float actionTime, currentTime;
 
-    /*
+    
 	public void GestureInProgress(uint userId, int userIndex, KinectGestures.Gestures gesture, 
 		float progress, KinectWrapper.NuiSkeletonPositionIndex joint, Vector3 screenPos)
 	{
@@ -43,7 +43,7 @@ public class Event : MonoBehaviour
 		// don't do anything here, just reset the gesture state
 		return true;
 	}
-    */
+    
     // Use this for initialization
     void Start()
     {
@@ -161,7 +161,7 @@ public class Event : MonoBehaviour
             catScript.agent.SetDestination(Laserpoint.transform.position);
         }
 
-        /*
+        
 		KinectManager kinectManager = KinectManager.Instance;
 		if ((!kinectManager || !kinectManager.IsInitialized () || !kinectManager.IsUserDetected ())) {
 			SetUserInput (false);
@@ -171,7 +171,7 @@ public class Event : MonoBehaviour
             if(currentTime - actionTime >= 5.0f)
 			    SetUserInput (true);
 			//Debug.Log ("Kinect is Detecting");
-			uint userId = kinectManager.GetPlayer1ID ();s
+			uint userId = kinectManager.GetPlayer1ID ();
 			kinectManager.DetectGesture(userId, KinectGestures.Gestures.RaiseRightHand);
 			kinectManager.DetectGesture(userId, KinectGestures.Gestures.RaiseLeftHand);
 			string t = Server.returnValue; // "123.456" -> 123.456 
@@ -183,7 +183,7 @@ public class Event : MonoBehaviour
 				CatResponse (b); 
 			}
 		}
-        */
+        
         GameObject light = GameObject.Find("Directional Light");
         light.transform.Rotate(0, 5 * Time.deltaTime, 0);
         if (light.transform.rotation.x >= 0.6f || light.transform.rotation.x <= -0.6)
